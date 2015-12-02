@@ -1,0 +1,83 @@
+<div class="row" ng-controller="SubjectController" ng-init="init()">
+	<div class="col-md-6">
+		<div class="list-group">
+			<div class="list-group-item list-group-header">
+				<label>Subjects</label>
+			</div>
+			<div class="list-group-canvas list-group-search-results">
+			   <div class="list-group-item text-center" ng-if="SearchBox">
+				<h4 class="list-group-item-heading">Search result(s) for <b><i>{{SearchBox}}</i></b>.</h4>
+				<p class="list-group-item-text">
+					Click the <span class="glyphicon glyphicon-search" aria-hidden="true"></span> to look further.
+					Click the <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> to cancel.
+				</p>
+			  </div>
+			  <div class="list-group-item text-center" ng-if="!Subjects.length">
+					Loading...
+			   </div>
+				<div class="list-group-item" ng-repeat="subject in Subjects | filter:filterSubjects" >
+					<h4 class="list-group-item-heading">{{subject.name}}</h4>
+					<p class="list-group-item-text">{{subject.description}}</p>
+				</div>
+			</div>
+			<div class="list-group-item list-group-search-box">
+				<div class="input-group"> 
+					<div class="input-group-btn" ng-click="confirmSearch()"><button class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button></div>
+					<input type="text" class="form-control" ng-model="SearchBox" placeholder="Search" focus="true" />
+					<div class="input-group-btn" ng-click="cancelSearch()"><button class="btn btn-default"><span class="glyphicon glyphicon-remove"></span></button></div>
+				</div>
+			  </div>
+		</div>
+	<div class="list-group">
+			<div class="list-group-item list-group-header">
+				<label>Subjects</label>
+			</div>
+			<div class="list-group-canvas list-group-search-results">
+			   <div class="list-group-item text-center" ng-if="SearchBox">
+				<h4 class="list-group-item-heading">Search result(s) for <b><i>{{SearchBox}}</i></b>.</h4>
+				<p class="list-group-item-text">
+					Click the <span class="glyphicon glyphicon-search" aria-hidden="true"></span> to look further.
+					Click the <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> to cancel.
+				</p>
+			  </div>
+			  <div class="list-group-item text-center" ng-if="!Subjects.length">
+					Loading...
+			   </div>
+				<div class="list-group-item" ng-repeat="subject in Subjects | filter:filterSubjects" >
+					<h4 class="list-group-item-heading">{{subject.name}}</h4>
+					<p class="list-group-item-text">{{subject.description}}</p>
+				</div>
+			</div>
+			<div class="list-group-item list-group-search-box">
+				<div class="input-group"> 
+					<div class="input-group-btn" ng-click="confirmSearch()"><button class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button></div>
+					<input type="text" class="form-control" ng-model="SearchBox" placeholder="Search" focus="true" />
+					<div class="input-group-btn" ng-click="cancelSearch()"><button class="btn btn-default"><span class="glyphicon glyphicon-remove"></span></button></div>
+				</div>
+			  </div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="list-group">
+			<div class="list-group-item list-group-header">
+				<label>Entry</label>
+			</div>
+			<button class="btn btn-fab btn-primary top right" ng-click="saveSubject()" >+</button>
+			<div class="list-group-canvas"> 
+				<div class="list-group-item list-group-header">
+					<h5>Subject</h5>
+				</div>
+				<div class="list-group-item"> 
+					<div class="form-group  col-md-6">
+						<label>Nomenclature</label>
+						<input type="text" class="form-control" placeholder="Name" ng-model="Subject.name"/>
+					</div>
+					<div class="form-group  col-md-6">
+						<label>&nbsp;</label>
+						<input type="text" class="form-control" placeholder="Descripition" ng-model="Subject.description" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
