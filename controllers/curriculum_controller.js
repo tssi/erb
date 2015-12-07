@@ -1,10 +1,11 @@
 "use strict";
 define(['app','api'], function (app) {
-    app.register.controller('SubjectController',['$scope','$rootScope','api', function ($scope,$rootScope,api) {
+    app.register.controller('CurriculumController',['$scope','$rootScope','api', function ($scope,$rootScope,api) {
 		$scope.init = function(){
-			$rootScope.__MODULE_NAME ='Subject';
+			$rootScope.__MODULE_NAME ='Curriculum';
 			
-			$scope.initSubjects({limit:2});
+			$scope.initSubjects();
+			$scope.initLevels();
 		}
 		function getSubjects(data){
 			api.GET('subjects',data,function success(response){
@@ -19,6 +20,16 @@ define(['app','api'], function (app) {
 					$scope.LastItem=$scope.TotalItems;
 				};
 				$scope.DataLoading = false;
+			});
+		}
+		$scope.initLevels = function(){
+			api.GET('year_levels',function success(response){
+				$scope.Levels = response.data;
+				for(i in $scope.Levels){
+					var level = $scope.levels[i];
+					 $scope.CurriculumDetails[level.YearLevel.id]=[];
+				}
+				console.log($CurriculumDetails);
 			});
 		}
 		$scope.initSubjects = function(){
@@ -51,6 +62,16 @@ define(['app','api'], function (app) {
 				console.log(response);
 				$scope.initSubjects({limit:10});
 			});
+		}
+		//change level
+		$scope.changeLevels = function($level){
+			console.log($scope.CurriculumDetail);
+			if(!$scope.CurriculumDetail.educ_level_id){
+				return $level.educ_level_id.id =='';
+			}else{
+				return $level.educ_level_id == $scope.CurriculumDetail.educ_level_id;
+			}
+			
 		}
 	}]);
 });
