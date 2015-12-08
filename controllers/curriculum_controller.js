@@ -9,7 +9,6 @@ define(['app','api'], function (app) {
 		}
 		function getSubjects(data){
 			api.GET('subjects',data,function success(response){
-				console.log(response);
 				$scope.Subjects = response.data;
 				$scope.NextPage=response.meta.next;
 				$scope.PrevPage=response.meta.prev;
@@ -23,12 +22,11 @@ define(['app','api'], function (app) {
 			});
 		}
 		$scope.initLevels = function(){
-			api.GET('year_levels',function success(response){
+			api.GET('year_levels',{'limit':20},function success(response){
 				$scope.Levels = response.data;
-				for(i in $scope.Levels){
-					var level = $scope.levels[i];
-					 $scope.CurriculumDetails[level.YearLevel.id]=[];
-				}
+				$.each($scope.Levels,function(i,o){
+					 $scope.CurriculumDetails[o.id]=[];
+				});
 				console.log($CurriculumDetails);
 			});
 		}
