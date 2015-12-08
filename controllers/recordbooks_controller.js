@@ -1,6 +1,6 @@
 "use strict";
 define(['app','api','jquery','fixtable'], function (app) {
-    app.register.controller('RecordBookController',['$scope','$rootScope','api', function ($scope,$rootScope,api,$window) {
+    app.register.controller('RecordBookController',['$scope','$rootScope','api', function ($scope,$rootScope,api,$window , $uibModal, $log) {
 		$scope.init = function(){
 			$rootScope.__MODULE_NAME ='RecordBook';
 			$scope.initFacultyLoads({limit:2});
@@ -42,8 +42,6 @@ define(['app','api','jquery','fixtable'], function (app) {
 			});
 		}
 		
-		console.log($('#demo'));
-		
 		//TABS
 		//$scope.tabs = [
 			//{ title:'2nd Period', content:'Dynamic content 2' },
@@ -52,13 +50,60 @@ define(['app','api','jquery','fixtable'], function (app) {
 		//];
 		
 		$scope.openRecordBook = function($){
-				$scope.loads = false;
-				$scope.erb = true;
+			$scope.loads = false;
+			$scope.erb = true;
 		};
 		
+		//MODAL
+		
+		$scope.items = ['item1', 'item2', 'item3'];
+
+		$scope.animationsEnabled = true;
+
+		$scope.open = function (size) {
+
+		var modalInstance = $uibModal.open({
+		  animation: $scope.animationsEnabled,
+		  templateUrl: 'myModalContent.html',
+		  controller: 'ModalInstanceCtrl',
+		  size: size,
+		  resolve: {
+			items: function () {
+			  return $scope.items;
+			}
+		  }
+		});
+
+		modalInstance.result.then(function (selectedItem) {
+		  $scope.selected = selectedItem;
+			}, function () {
+			  $log.info('Modal dismissed at: ' + new Date());
+			});
+		};
+
+		$scope.toggleAnimation = function () {
+			$scope.animationsEnabled = !$scope.animationsEnabled;
+		};
+
+		app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, items) {
+
+		  $scope.items = items;
+		  $scope.selected = {
+			item: $scope.items[0]
+		  };
+
+		  $scope.ok = function () {
+			$uibModalInstance.close($scope.selected.item);
+		  };
+
+		  $scope.cancel = function () {
+			$uibModalInstance.dismiss('cancel');
+		  };
+		});
+					
+		//FIX TABLE
 		(function() {
 			var demo, fixedTable;
-			console.log('wew');
 			fixedTable = function(el) {
 				var $body, $header, $sidebar;
 				$body = $(el).find('.fixedTable-body');
@@ -76,7 +121,8 @@ define(['app','api','jquery','fixtable'], function (app) {
 			demo = new fixedTable($('#demo'));
 
 		}).call(this);
-	
+		
+
 	}]);
 	
 });
