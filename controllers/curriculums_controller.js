@@ -1,9 +1,10 @@
 "use strict";
-define(['app','api'], function (app) {
+define(['app','api','jquery'], function (app) {
     app.register.controller('CurriculumController',['$scope','$rootScope','api', function ($scope,$rootScope,api) {
 		$scope.init = function(){
 			$rootScope.__MODULE_NAME ='Curriculum';
-			
+			$scope.Curriculums={};
+			$scope.Curriculums['CurriculumDetails']={};
 			$scope.initSubjects();
 			$scope.initLevels();
 		}
@@ -25,9 +26,8 @@ define(['app','api'], function (app) {
 			api.GET('year_levels',{'limit':20},function success(response){
 				$scope.Levels = response.data;
 				$.each($scope.Levels,function(i,o){
-					 $scope.CurriculumDetails[o.id]=[];
+					 $scope.Curriculums['CurriculumDetails'][o.id]=[];
 				});
-				console.log($CurriculumDetails);
 			});
 		}
 		$scope.initSubjects = function(){
@@ -63,11 +63,28 @@ define(['app','api'], function (app) {
 		}
 		//change level
 		$scope.changeLevels = function($level){
-			console.log($scope.CurriculumDetail);
-			if(!$scope.CurriculumDetail.educ_level_id){
+			console.log($scope.Curriculums);
+			console.log($level);
+			if(!$scope.Curriculums.educ_level_id){
 				return $level.educ_level_id.id =='';
 			}else{
-				return $level.educ_level_id == $scope.CurriculumDetail.educ_level_id;
+				return $level.educ_level_id == $scope.Curriculums.educ_level_id;
+			}
+			
+		}
+		//push subjects
+		$scope.pushSub=function(data){
+			var index = $scope.droppedObjects1[data.YearLevel.id].indexOf(data);
+			var dept_name = $('#CurriculumEducLevelId option:selected').text();
+			var dept = $scope.Curriculums.educ_level_id;
+			if (index == -1){
+				if(data.EducLevel.id == dept){
+					$scope.Curriculums.CurriculumDetails[data.YearLevel.id].push(data);
+				}else{
+					alert("Subject not Applicable to "+dept_name+"!");
+				}
+			}else{
+				alert("already added!");
 			}
 			
 		}
