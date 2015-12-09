@@ -1,0 +1,228 @@
+<style>
+	.curridtl {
+		height: 97rem;
+	}
+	.curridtlcanvas {
+		height: 96rem;
+	}
+</style>
+<div class="row" ng-controller="TemplateController" ng-init="init()">
+	<div class="col-md-6">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="list-group">
+					<div class="list-group-item list-group-header">
+						<div class="btn-group btn-group-sm pull-right" uib-dropdown>
+							<button class="btn btn-default disabled">{{FirstItem}} - {{LastItem}} of {{TotalItems}}</button>
+							<button class="btn btn-default" ng-disabled="!PrevPage || DataLoading" ng-click="navigatePage(PrevPage)"><span class="glyphicon glyphicon-chevron-left"></span></button>
+							<button class="btn btn-default" ng-disabled="!NextPage || DataLoading" ng-click="navigatePage(NextPage)"><span class="glyphicon glyphicon-chevron-right"></span></button>
+							
+							  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" uib-dropdown-toggle>
+								<span class="glyphicon glyphicon-chevron-down"></span>
+							  </button>
+							  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li><a href="#/">Sort</a></li>
+								<li><a href="#/">Filter</a></li>
+								<li><a href="#/">Go to Page</a></li>
+								<li role="separator" class="divider"></li>
+								<li><a href="#/">Some other link</a></li>
+								
+							  </ul>
+						</div>
+						<label>Template</label>
+					</div>
+					<div class="list-group-canvas list-group-search-results">
+					   <div class="list-group-item text-center" ng-if="SearchBox">
+						<h4 class="list-group-item-heading">Search result(s) for <b><i>{{SearchBox}}</i></b>.</h4>
+						<p class="list-group-item-text">
+							Click the <span class="glyphicon glyphicon-search" aria-hidden="true"></span> to look further.
+							Click the <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> to cancel.
+						</p>
+					  </div>
+					  <div class="list-group-item text-center" ng-if="!Templates.length">
+							Loading...
+					   </div>
+						<div class="list-group-item" ng-repeat="template in Templates | filter:filterTemplates" >
+							<h4 class="list-group-item-heading">{{template.name}}</h4>
+							<p class="list-group-item-text">School Year: {{template.sy}} - {{template.sy+1}} </p>
+						</div>
+					</div>
+					<div class="list-group-item list-group-search-box">
+						<div class="input-group"> 
+							<div class="input-group-btn" ng-click="confirmSearch()"><button class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button></div>
+							<input type="text" class="form-control" ng-model="SearchBox" placeholder="Search" focus="true" />
+							<div class="input-group-btn" ng-click="cancelSearch()"><button class="btn btn-default"><span class="glyphicon glyphicon-remove"></span></button></div>
+						</div>
+					  </div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="list-group">
+					<div class="list-group-item list-group-header">
+						<button class="btn btn-xs btn-success" ng-click="addSubject()"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+						<div class="btn-group btn-group-sm pull-right" uib-dropdown>
+							<button class="btn btn-default disabled">{{FirstItem}} - {{LastItem}} of {{TotalItems}}</button>
+							<button class="btn btn-default" ng-disabled="!PrevPage || DataLoading" ng-click="navigatePage(PrevPage)"><span class="glyphicon glyphicon-chevron-left"></span></button>
+							<button class="btn btn-default" ng-disabled="!NextPage || DataLoading" ng-click="navigatePage(NextPage)"><span class="glyphicon glyphicon-chevron-right"></span></button>
+							
+							  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" uib-dropdown-toggle>
+								<span class="glyphicon glyphicon-chevron-down"></span>
+							  </button>
+							  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li><a href="#/">Sort</a></li>
+								<li><a href="#/">Filter</a></li>
+								<li><a href="#/">Go to Page</a></li>
+								<li role="separator" class="divider"></li>
+								<li><a href="#/">Some other link</a></li>
+								
+							  </ul>
+						</div>
+						<label>Components</label>
+					</div>
+					<div class="list-group-canvas list-group-search-results">
+					   <div class="list-group-item text-center" ng-if="SearchBox">
+						<h4 class="list-group-item-heading">Search result(s) for <b><i>{{SearchBox}}</i></b>.</h4>
+						<p class="list-group-item-text">
+							Click the <span class="glyphicon glyphicon-search" aria-hidden="true"></span> to look further.
+							Click the <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> to cancel.
+						</p>
+					  </div>
+					  <div class="list-group-item text-center" ng-if="!Components.length">
+							Loading...
+					   </div>
+						<div class="list-group-item" ng-repeat="component in Components | filter:filterComponents" >
+							<div class="row">
+								<div class="col-md-8">
+									<h4 class="list-group-item-heading">{{component.description}}</h4>
+									<p class="list-group-item-text">Code:{{component.code}} | Percentage:{{component.percentage}}</p>
+								</div>
+								<div class="col-md-4">
+									<button class="btn btn-info pull-right" ng-click="pushSub(subject)"><span class="glyphicon glyphicon-hand-right"></span></button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="list-group-item list-group-search-box">
+						<div class="input-group"> 
+							<div class="input-group-btn" ng-click="confirmSearch()"><button class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button></div>
+							<input type="text" class="form-control" ng-model="SearchBox" placeholder="Search" focus="true" />
+							<div class="input-group-btn" ng-click="cancelSearch()"><button class="btn btn-default"><span class="glyphicon glyphicon-remove"></span></button></div>
+						</div>
+					  </div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="list-group curridtl" >
+			<div class="list-group-item list-group-header">
+				<button class="btn btn-xs btn-danger" ng-click="deleteSubject()"> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+				<label>Template Details</label>
+				<div class="btn-group btn-group-sm pull-right" uib-dropdown>
+					  <button class="btn btn-default dropdown-toggle" type="button"  uib-dropdown-toggle>
+						<span class="glyphicon glyphicon-chevron-down"></span>
+					  </button>
+					  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+						<li><a href="#/">Edit</a></li>
+						<li><a href="#/">Save</a></li>
+						<li><a href="#/">Copy</a></li>
+						<li><a href="#/">delete</a></li>
+						<li role="separator" class="divider"></li>
+						<li><a href="#/">Some other link</a></li>
+					  </ul>
+				</div>
+			</div>
+			<div class="list-group-canvas curridtl"> 
+				
+				<div class="list-group-item curridtlcanvas"> 
+					<div class="row">
+						<div class="col-lg-12">
+							<label>Name</label>
+							<input type="text" class="form-control" placeholder="Name" ng-model="Curriculums.name"/>
+						</div>
+					</div>
+					<div class="row">
+				
+						<div class="form-group  col-md-6">
+							<label>School Year</label>
+							<select  class="form-control input-sm ng-pristine ng-invalid ng-invalid-required ng-touched" ng-model="Curriculums.sy" ng-required="1" required="required">
+								<option value="">Select</option>
+								<option value="2015">2015-2016</option>
+								<option value="2014">2014-2015</option>
+								<option value="2013">2013-2014</option>
+							</select>
+						</div>
+						<div class="form-group  col-md-6">
+							
+							<div class="input select"><label for=""> Department</label>
+							<select class="form-control input-sm ng-dirty ng-valid-parse ng-valid ng-valid-required ng-touched" ng-model="Curriculums.educ_level_id" ng-required="1" required="required" id="CurriculumEducLevelId">
+								<option value="">Select</option>
+								<option value="GS">Grade School</option>
+								<option value="HS">High School</option>
+								<option value="PS">Pre-school</option>
+							</select></div>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="form-group  col-md-6">
+							<label for="subject_id">Subject</label>
+							<select class="form-control input-sm">
+								<option value="">Select</option>
+								<option value="">English </option>
+								<option value="">Science</option>
+								<option value="">Filipino</option>
+								<option value="">Mathematics</option>
+								<option value="">Aralin Panlipunan</option>
+								<option value="">MAPEH</option>
+							</select>
+						</div>
+						<div class="form-group  col-md-6">
+							<div class="input select"><label for="grade_year_level_id">Grade/Year Level</label>
+								<select  class="form-control input-sm" multiple="multiple">
+									<option value="G1">Grade 1</option>
+									<option value="G2">Grade 2</option>
+									<option value="G3">Grade 3</option>
+									<option value="G4">Grade 4</option>
+									<option value="G5">Grade 5</option>
+									<option value="G6">Grade 6</option>
+									<option value="G7">Grade 7</option>
+									<option value="G8">Grade 8</option>
+									<option value="G9">Grade 9</option>
+									<option value="GA">Grade 10</option>
+									<option value="P1">Nursery</option>
+									<option value="P2">Kinder I</option>
+									<option value="P3">Kinder II</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					
+					<table ui-tree class="table table-bordered table-condensed table-sort" >
+						<thead>
+							<tr>
+								<th colspan="4"><center>General Components</center></th>
+							</tr>
+							<tr>
+								<th>Code</th>
+								<th>Description</th>
+								<th>Percentage</th>
+								<th class="col-md-1"><button class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button></th>
+							</tr>
+						</thead>
+						<tbody >
+							<tr>
+								<td class="col-md-5">WW</td>
+								<td class="col-md-6">WRITTEN WORKS</td>
+								<td class="col-md-5">50%</td>
+								<td class="col-md-1"><button class="btn  btn-default"><span class="glyphicon glyphicon-sort"></span></button></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
