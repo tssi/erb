@@ -43,7 +43,7 @@ define(['model'],function($model){
 						  "name":"High School",
 						  "id":"HS"
 					  },
-					  "subjects":["MATH1","MATH2","MATH3","MATH4"],
+					   "subjects":["MATH1","MATH2","MATH3","MATH4"],
 					  "year_level":["G7","G8","G9","GX"]
 					},
 				]
