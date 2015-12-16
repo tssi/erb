@@ -10,8 +10,10 @@ define(['app','api','jquery','fixtable'], function (app) {
 			
 		}
 		$scope.initFacultyLoads = function(data){
-			api.GET('faculty_loads',data,function success(response){
+			api.GET('faculty_loadings',data,function success(response){
 				$scope.FacultyLoads = response.data;
+				
+				console.log($scope.FacultyLoads);
 			});
 		}
 		$scope.filterFacultyLoads =  function(load){
@@ -24,7 +26,7 @@ define(['app','api','jquery','fixtable'], function (app) {
 			var searchBox = $scope.SearchBox;
 			var data = {keyword:searchBox,fields:['subject','year_level','section']};
 			$scope.FacultyLoads=[];
-			api.GET('faculty_loads',data,function success(response){
+			api.GET('faculty_loadings',data,function success(response){
 				$scope.FacultyLoads = response.data;
 			});
 		}				

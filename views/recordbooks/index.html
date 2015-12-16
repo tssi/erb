@@ -41,8 +41,8 @@
 						Loading...
 				   </div>
 					<div class="list-group-item" ng-repeat="load in FacultyLoads | filter:filterFacultyLoads" ng-click="openRecordBook({limit:100},load.id)">
-						<h4 class="list-group-item-heading">{{load.subject}}</h4>
-						<p class="list-group-item-text">{{load.year_level}} - {{load.section}}</p>
+						<h4 class="list-group-item-heading">{{load.subject.description}}</h4>
+						<p class="list-group-item-text">{{load.year_level.name}} - {{load.section.name}}</p>
 					</div>
 				</div>
 				<div class="list-group-item list-group-search-box">
