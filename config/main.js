@@ -16,8 +16,8 @@ require.config({
 		'root': 'controllers/root_controller',
 		'directives': 'directives/bootstrap_directive',
 		'api': 'controllers/api_controller',
-		'jquery': 'vendors/jquery',
-		'fixtable': 'vendors/fixtable',
+		'jquery': '../vendors/js/jquery',
+		'fixtable': '../vendors/js/fixtable',
     },
     // Add angular modules that does not support AMD out of the box, put it in a shim
     shim: {

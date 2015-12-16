@@ -1,0 +1,50 @@
+.fixedTable .table {
+	background-color: white;
+	width: auto;
+}
+.fixedTable .fixedTable-body .table  tr td,
+.fixedTable .fixedTable-header .table tr th {
+	min-width: 64px;
+	width: 100px;
+	min-height: 20px;
+	height: 20px;
+	padding: 5px;
+	/* padding: 1px;*/
+}
+
+.fixedTable .fixedTable-sidebar .table  tr td,
+.fixedTable .fixedTable-sidebar .table tr th {
+	min-width: 223px;
+	width: 223px;
+	min-height: 20px;
+	height: 20px;
+	padding: 5px;
+	/* padding: 1px;*/
+}
+
+.fixedTable-header {
+	width: 915px;
+	height: 70px;
+	margin-left: 20%;
+	overflow: hidden;
+	border-bottom: 1px solid #CCC;
+}
+.fixedTable-sidebar {
+	width: 20%;
+	height: 415px;
+	float: left;
+	overflow: hidden;
+	border-right: 1px solid #CCC;
+}
+.fixedTable-body {
+	overflow: auto;
+	width: 932px;
+	height: 415px;
+	float: left;
+}
+
+/*
+.fixedTable .table input {
+	border-radius: 0px;
+}*/
+

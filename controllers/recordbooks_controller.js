@@ -1,12 +1,13 @@
 "use strict";
 define(['app','api','jquery','fixtable'], function (app) {
-    app.register.controller('RecordBookController',['$scope','$rootScope','api', function ($scope,$rootScope,api,$window , $uibModal, $log) {
+    app.register.controller('RecordBookController',['$scope','$rootScope','api','$uibModal', function ($scope,$rootScope,api,$uibModal) {
 		$scope.init = function(){
 			$rootScope.__MODULE_NAME ='RecordBook';
 			$scope.initFacultyLoads({limit:2});
 			$scope.initStudents({limit:10});
 			$scope.loads = true;
 			$scope.erb = false;
+			
 		}
 		$scope.initFacultyLoads = function(data){
 			api.GET('faculty_loads',data,function success(response){
@@ -26,80 +27,80 @@ define(['app','api','jquery','fixtable'], function (app) {
 			api.GET('faculty_loads',data,function success(response){
 				$scope.FacultyLoads = response.data;
 			});
-		}
-		$scope.saveSubject = function(){
-			api.POST('faculty_loads',$scope.FacultyLoads,function success(response){
-				console.log(response);
-				$scope.initFacultyLoads({limit:10});
-			});
-		}
-		
-		
+		}				
 		$scope.initStudents = function(data){
 			api.GET('students',data,function success(response){
 				$scope.Students = response.data;
-				console.log($scope.Students);
 			});
-		}
-		
-		//TABS
-		//$scope.tabs = [
-			//{ title:'2nd Period', content:'Dynamic content 2' },
-		//	{ title:'3rd Period', content:'Dynamic content 3' },
-		//	{ title:'4th Period', content:'Dynamic content 4' },
-		//];
-		
-		$scope.openRecordBook = function($){
+		}		
+		$scope.openRecordBook = function(data,load_id){
 			$scope.loads = false;
 			$scope.erb = true;
-		};
-		
-		//MODAL
-		
-		$scope.items = ['item1', 'item2', 'item3'];
-
-		$scope.animationsEnabled = true;
-
-		$scope.open = function (size) {
-
-		var modalInstance = $uibModal.open({
-		  animation: $scope.animationsEnabled,
-		  templateUrl: 'myModalContent.html',
-		  controller: 'ModalInstanceCtrl',
-		  size: size,
-		  resolve: {
-			items: function () {
-			  return $scope.items;
+			//FOR TESTING PURPOSES
+			if(load_id == 1){
+				var testComponents = 'components';
+				var testMeasurableItems = 'measurable_items';
+			}else{
+				var testComponents = 'init_components';
+				var testMeasurableItems = 'init_measurable_items';
 			}
-		  }
-		});
-
-		modalInstance.result.then(function (selectedItem) {
-		  $scope.selected = selectedItem;
-			}, function () {
-			  $log.info('Modal dismissed at: ' + new Date());
+			api.GET(testComponents,data,function success(response){
+				$scope.Components = response.data[0];
+			});
+			api.GET(testMeasurableItems,data,function success(response){
+				$scope.MeasurableItems = response.data;
+				$scope.MeasurableItemsCount = response.data.length;
 			});
 		};
-
-		$scope.toggleAnimation = function () {
-			$scope.animationsEnabled = !$scope.animationsEnabled;
+		
+		// PERIOD RADIO BUTTON EVENT HANDLER
+		$scope.selectPeriod = function(data,period){
+			if(period == '1st'){
+				var testComponents = 'components';
+				var testMeasurableItems = 'measurable_items';
+			}else{
+				var testComponents = 'init_components';
+				var testMeasurableItems = 'init_measurable_items';
+			}
+			
+			api.GET(testComponents,data,function success(response){
+				$scope.Components = response.data[0];
+			});
+			api.GET(testMeasurableItems,data,function success(response){
+				$scope.MeasurableItems = response.data;
+				$scope.MeasurableItemsCount = response.data.length;
+			});
+			
 		};
-
-		app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, items) {
-
-		  $scope.items = items;
-		  $scope.selected = {
-			item: $scope.items[0]
-		  };
-
-		  $scope.ok = function () {
-			$uibModalInstance.close($scope.selected.item);
-		  };
-
-		  $scope.cancel = function () {
-			$uibModalInstance.dismiss('cancel');
-		  };
-		});
+		
+		
+		
+		//Opening the modal
+		$scope.editMeasurable=function(data,id){
+			if(id == 1){ //FOR TESTING PURPOSES
+				 var fetch = 'component_measurable_1';
+			}else if(id == 2){
+				 var fetch = 'component_measurable_2';
+			}else if(id == 3){
+				 var fetch = 'component_measurable_3';
+			}//
+			
+			api.GET(fetch,data,function success(response){
+				$scope.EditableItems = response.data;
+				var modalInstance = $uibModal.open({
+				animation: true,
+				templateUrl: 'myModalContent.html',
+				controller: 'ModalInstanceController',
+				resolve: {
+					items: function () {
+						return $scope.EditableItems;
+					}
+				  }
+				});
+				modalInstance.opened.then(function(){$rootScope.__MODAL_OPEN=true;});
+			});
+		};
+		
 					
 		//FIX TABLE
 		(function() {
@@ -112,19 +113,39 @@ define(['app','api','jquery','fixtable'], function (app) {
 			
 				
 				return $($body).scroll(function() {
-						console.log('wew');
 					$($sidebar).css('margin-top', -$($body).scrollTop());
 					return $($header).css('margin-left', -$($body).scrollLeft());
 				});
 			};
-
 			demo = new fixedTable($('#demo'));
-
 		}).call(this);
 		
-
+	
 	}]);
 	
+	app.register.controller('ModalInstanceController',['$scope','$rootScope','$uibModalInstance','api','items', function ($scope, $rootScope, $uibModalInstance, api,items){
+		
+		$scope.EditableItems = items;
+
+		//Get the data entered and push it to booklets.js
+		$scope.confirmEdit = function(){
+			$rootScope.__MODAL_OPEN=false;
+			 $uibModalInstance.dismiss('confirm');
+		};
+		//Close modal
+		$scope.cancelEdit = function(){
+			$rootScope.__MODAL_OPEN=false;
+			$uibModalInstance.dismiss('cancel');
+			/*REFECHT DATA
+			api.GET('measurable_items',data,function success(response){
+				$scope.MeasurableItems = response.data;
+			});
+			*/
+		};
+	}]);
+	
+	
+
 });
 
 

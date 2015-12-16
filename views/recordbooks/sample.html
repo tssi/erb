@@ -1,0 +1,240 @@
+<style>
+	.no-padding{
+		padding:0 !important;
+	}
+	
+	/* Specify styling for tooltip contents */
+	.tooltip.ps .tooltip-inner {
+		color: #880000;
+		background-color: #ffff66;
+		box-shadow: 0 6px 12px rgba(0,0,0,.175);
+	}
+	/* Hide arrow */
+	.tooltip.ps .tooltip-arrow {
+		display: none;
+	}
+	.w55px{
+		width:55px;
+	}
+	.w60px{
+		width:60px;
+	}
+</style>
+<link rel="stylesheet" href="app/assets/css/fixtable.css">
+<div ng-controller="RecordBookController" ng-init="init()">
+	<div class="row" ng-show="loads">
+		<div class="col-md-6">
+			<div class="list-group">
+				<div class="list-group-item list-group-header">
+					<label>Load</label>
+				</div>
+				<div class="list-group-canvas list-group-search-results">
+				   <div class="list-group-item text-center" ng-if="SearchBox">
+					<h4 class="list-group-item-heading">Search result(s) for <b><i>{{SearchBox}}</i></b>.</h4>
+					<p class="list-group-item-text">
+						Click the <span class="glyphicon glyphicon-search" aria-hidden="true"></span> to look further.
+						Click the <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> to cancel.
+					</p>
+				  </div>
+				  <div class="list-group-item text-center" ng-if="!FacultyLoads.length">
+						Loading...
+				   </div>
+					<div class="list-group-item" ng-repeat="load in FacultyLoads | filter:filterFacultyLoads" ng-click="openRecordBook()">
+						<h4 class="list-group-item-heading">{{load.subject}}</h4>
+						<p class="list-group-item-text">{{load.year_level}} - {{load.section}}</p>
+					</div>
+				</div>
+				<div class="list-group-item list-group-search-box">
+					<div class="input-group"> 
+						<div class="input-group-btn" ng-click="confirmSearch()"><button class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button></div>
+						<input type="text" class="form-control" ng-model="SearchBox" placeholder="Search" focus="true" />
+						<div class="input-group-btn" ng-click="cancelSearch()"><button class="btn btn-default"><span class="glyphicon glyphicon-remove"></span></button></div>
+					</div>
+				  </div>
+			</div>
+		</div>
+		
+	</div>
+	<div class="row" ng-show="erb">
+		<div class="btn-group" role="group" >
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-default active">1st Period</button>
+			</div>
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-default">2nd Period</button>
+			</div>
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-default">3rd Period</button>
+			</div>
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-default">4th Period</button>
+			</div>
+		</div>
+		
+		<div class="btn-group pull-right" role="group" aria-label="...">
+			<button type="button" class="btn btn-default">Export</button>
+			<button type="button" class="btn btn-default">Send to CGPS</button>
+
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Print
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu">
+					<li><a href="#">Grade Sheet</a></li>
+					<li><a href="#">Class Rexc</a></li>
+				</ul>
+			</div>
+		</div>
+	</div><br/>
+	<div class="row" ng-show="erb">
+		<div class="col-md-12">
+			<div id="demo" class="fixedTable row">
+				<header class="fixedTable-header">
+					<table class="table table-bordered">
+						<thead>
+							<tr>
+								<th colspan="13">
+									<div class=" btn-group btn-group-xs pull-right">
+										<a class="btn btn-default" tooltip-placement="bottom" uib-tooltip="Add Measurable Item"><i class="glyphicon glyphicon-plus-sign"></i></a>
+										<a class="btn btn-default" tooltip-placement="bottom" uib-tooltip="Edit Measurable Item" ng-click="editMeasurable()"><i class="glyphicon glyphicon-edit"></i></a>
+									</div>Written Work
+								</th>
+								<th colspan="5">
+									<div class=" btn-group btn-group-xs pull-right">
+										<a class="btn btn-default" tooltip-placement="bottom" uib-tooltip="Add Measurable Item"><i class="glyphicon glyphicon-plus-sign"></i></a>
+										<a class="btn btn-default" tooltip-placement="bottom" uib-tooltip="Edit Measurable Item" ng-click="editMeasurable()"><i class="glyphicon glyphicon-edit"></i></a>
+									</div>Performance Task
+								</th>
+								<th colspan="4" >
+									<div class=" btn-group btn-group-xs pull-right">
+										<a class="btn btn-default" tooltip-placement="bottom" uib-tooltip="Add Measurable Item"><i class="glyphicon glyphicon-plus-sign"></i></a>
+										<a class="btn btn-default" tooltip-placement="bottom" uib-tooltip="Edit Measurable Item" ng-click="editMeasurable()"><i class="glyphicon glyphicon-edit"></i></a>
+									</div>Quarterly Assessment
+								</th>
+								<th rowspan="2" class="text-center"><a uib-tooltip="Summary">SUM</a></th>
+								<th rowspan="2" class="text-center"><a uib-tooltip="Quarterly Grade">Q.GR</a></th>
+							</tr>
+							<tr>
+								<th class="text-center"><a uib-tooltip="Perfect Score: 10" tooltip-class="ps">Q1</a></th>
+								<th class="text-center"><a uib-tooltip="Perfect Score: 10" tooltip-class="ps">Q2</a></th>
+								<th class="text-center"><a uib-tooltip="Perfect Score: 10" tooltip-class="ps">Q3</a></th>
+								<th class="text-center"><a uib-tooltip="Perfect Score: 10" tooltip-class="ps">Q4</a></th>
+								<th class="text-center"><a uib-tooltip="Perfect Score: 10" tooltip-class="ps">Q5</a></th>
+								<th class="text-center"><a uib-tooltip="Perfect Score: 10" tooltip-class="ps">Q6</a></th>
+								<th class="text-center"><a uib-tooltip="Perfect Score: 10" tooltip-class="ps">Q7</a></th>
+								<th class="text-center"><a uib-tooltip="Perfect Score: 10" tooltip-class="ps">Q8</a></th>
+								<th class="text-center"><a uib-tooltip="Perfect Score: 10" tooltip-class="ps">Q9</a></th>
+								<th class="text-center"><a uib-tooltip="Perfect Score: 10" tooltip-class="ps">Q10</a></th>
+								<th class="text-center">Total</th>
+								<th class="text-center"><a uib-tooltip="Percentage Score">P.S</a></th>
+								<th class="text-center"><a uib-tooltip="Weighted Score">W.S</a></th>
+								<th class="text-center"><a uib-tooltip="Perfect Score: 100" tooltip-class="ps">Project</a></th>
+								<th class="text-center"><a uib-tooltip="Perfect Score: 100" tooltip-class="ps">RCT.</a></th>
+								<th class="text-center">Total</th>
+								<th class="text-center"><a uib-tooltip="Percentage Score">P.S</a></th>
+								<th class="text-center"><a uib-tooltip="Weighted Score">W.S</a></th>
+								<th class="text-center"><a uib-tooltip="Perfect Score: 100" tooltip-class="ps">D.T</a> </th>
+								<th class="text-center">Total</th>
+								<th class="text-center"><a uib-tooltip="Percentage Score">P.S</a></th>
+								<th class="text-center"><a uib-tooltip="Weighted Score">W.S</a></th>
+							</tr>
+						</thead>
+					</table>
+				</header>
+				<aside class="fixedTable-sidebar">
+					<table class="table table-bordered">
+						<tbody>
+							<tr ng-repeat="student in Students | filter:filterStudents">
+								<td>
+									<input disabled="disabled" type="text" class="form-control input-sm" ng-model="student.full_name">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</aside>
+				<div class="fixedTable-body">
+					<table class="table table-bordered">
+						<tbody>
+							<tr ng-repeat="student in Students | filter:filterStudents">
+								<td><input type="text" class="form-control input-sm"></td>
+								<td><input type="text" class="form-control input-sm"></td>
+								<td><input type="text" class="form-control input-sm"></td>
+								<td><input type="text" class="form-control input-sm"></td>
+								<td><input type="text" class="form-control input-sm"></td>
+								<td><input type="text" class="form-control input-sm"></td>
+								<td><input type="text" class="form-control input-sm"></td>
+								<td><input type="text" class="form-control input-sm"></td>
+								<td><input type="text" class="form-control input-sm"></td>
+								<td><input type="text" class="form-control input-sm"></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td><input type="text" class="form-control input-sm"></td>
+								<td><input type="text" class="form-control input-sm"></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td><input type="text" class="form-control input-sm"></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<script type="text/ng-template" id="myModalContent.html">
+			<div class="modal-header">
+				<h3 class="modal-title">Edit </h3>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-lg-8 col-lg-offset-2">
+						<table class="table table-bordered" id="EditMeasurableTable">
+							<thead>
+								<tr>
+									<th class="w60px text-center">Header</th>
+									<th class="w55px text-center">P.Score</th>
+									<th class="w55px text-center">%</th>
+									<th class="w55px text-center">Base</th>
+									<th class="text-center"><a><i class="glyphicon glyphicon-sort text-center"></i></a></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td><input class="form-control input-sm w60px" maxlength="5"></td>
+									<td><input class="form-control input-sm w55px"></td>
+									<td><input class="form-control input-sm w55px"></td>
+									<td><input class="form-control input-sm w55px"></td>
+									<td class="text-center">
+										<a><i class="glyphicon glyphicon-plus-sign"></i></a> &nbsp;
+										<a><i class="glyphicon glyphicon-remove-circle"></i></a>
+									</td>
+								</tr>
+								<tr>
+									<td><input class="form-control input-sm w60px" maxlength="5"></td>
+									<td><input class="form-control input-sm w55px"></td>
+									<td><input class="form-control input-sm w55px"></td>
+									<td><input class="form-control input-sm w55px"></td>
+									<td class="text-center">
+										<a><i class="glyphicon glyphicon-plus-sign"></i></a> &nbsp;
+										<a><i class="glyphicon glyphicon-remove-circle"></i></a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-default pull-left" type="button" ng-click="cancelBooklet()">Cancel</button>
+				<button class="btn btn-primary" type="button" ng-click="confirmBooklet()">Confirm</button>
+			</div>
+		</script>
+</div>
