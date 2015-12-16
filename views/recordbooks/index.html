@@ -118,7 +118,7 @@
 						<tbody>
 							<tr ng-repeat="student in Students | filter:filterStudents">
 								<td>
-									<input readonly="readonly" type="text" ng-model="student.full_name" uib-popover="{{student.full_name}}" class="form-control input-sm">
+									<input readonly="readonly" type="text" ng-model="student.full_name" uib-popover="{{student.full_name}}" popover-trigger="mouseenter" class="form-control input-sm" style="text-overflow: ellipsis;">
 								</td>
 							</tr>
 						</tbody>

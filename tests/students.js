@@ -10,7 +10,7 @@ define(['model'],function($model){
 					  "id":"S201512345",
 					  "educ_level_id": "GS",
 					  "year_level_id": "G1",
-					  "full_name": "Dela Cruz, Juan Sobrang  Sobrang Masipag",
+					  "full_name": "Dela Cruz, Juan Pedro De Agustin Jr.",
 					  "first_name": "Juan",
 					  "middle_name": "Masipag",
 					  "last_name": "Dela Cruz",
