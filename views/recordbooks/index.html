@@ -163,7 +163,7 @@
 									<th class="text-center"><a class="btn btn-danger" ng-click="updateState('edit')"><i class="glyphicon glyphicon-remove text-center"></i></a></th>
 								</tr>
 							</thead>
-							<tbody ui-tree-nodes ng-model="EditableItems">
+							<tbody ui-tree-nodes ng-model="MeasurableItems">
 								<tr>
 									<td colspan="4">
 										<div class="help-text"><a href="" class="btn btn-xs btn-default disabled"><span class="glyphicon glyphicon-sort"></span></a> Click and drag to reorder.</div>
@@ -172,7 +172,7 @@
 										<a class="btn btn-success"><i class="glyphicon glyphicon-floppy-disk"></i></a>
 									</td>
 								</tr>
-								<tr ng-repeat="item in EditableItems" ui-tree-node>
+								<tr ng-repeat="item in MeasurableItems | filter:{component_id:componentId}" ui-tree-node>
 									<td><input class="form-control input-sm w60px" maxlength="5" value="{{item.header}}"></td>
 									<td><input class="form-control input-sm w55px" value="{{item.perfect_score}}"></td>
 									<td><input class="form-control input-sm w55px" value="{{item.percentage}}"></td>
