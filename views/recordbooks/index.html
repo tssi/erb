@@ -39,7 +39,7 @@
 				  <div class="list-group-item text-center" ng-if="!FacultyLoads.length">
 						Loading...
 				   </div>
-					<div class="list-group-item" ng-repeat="load in FacultyLoads | filter:filterFacultyLoads" ng-click="openRecordBook(load.id)">
+					<div class="list-group-item" ng-repeat="load in FacultyLoads | filter:filterFacultyLoads" ng-click="openRecordBook({limit:100},load.id)">
 						<h4 class="list-group-item-heading">{{load.subject.description}}{{load.id}}</h4>
 						<p class="list-group-item-text">{{load.year_level.name}} - {{load.section.name}}</p>
 					</div>

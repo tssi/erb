@@ -3,17 +3,13 @@ define(['app','api','jquery','fixtable'], function (app) {
     app.register.controller('RecordBookController',['$scope','$rootScope','api','$uibModal', function ($scope,$rootScope,api,$uibModal) {
 		$scope.init = function(){
 			$rootScope.__MODULE_NAME ='RecordBook';
-			$scope.initFacultyLoads();
-			$scope.initStudents();
+			$scope.initFacultyLoads({limit:10});
+			$scope.initStudents({limit:10});
 			$scope.loads = true;
 			$scope.erb = false;
 			
 		}
-		$scope.initFacultyLoads = function(){
-			api.GET('faculty_loadings',function success(response){
-				$scope.FacultyLoads = response.data;
-			});
-		}
+		$scope.initFacultyLoads = function(data){api.GET('faculty_loadings',data,function success(response){$scope.FacultyLoads = response.data})}
 		$scope.filterFacultyLoads =  function(load){
 			var searchBox = $scope.SearchBox;
 			var keyword = new RegExp(searchBox, 'i');
@@ -28,18 +24,9 @@ define(['app','api','jquery','fixtable'], function (app) {
 				$scope.FacultyLoads = response.data;
 			});
 		}				
-		$scope.initStudents = function(){
-			api.GET('students',function success(response){
-				$scope.Students = response.data;
-			});
-		}		
+		$scope.initStudents = function(data){api.GET('students',data,function success(response){$scope.Students = response.data})}		
 	
-		$scope.openRecordBook = function(load_id){
-			recordBook(load_id);
-		};
-		
-		
-		function recordBook(load_id){
+		$scope.openRecordBook = function(data,load_id){
 			$scope.loads = false;
 			$scope.erb = true;
 			//FOR TESTING PURPOSES
@@ -50,16 +37,19 @@ define(['app','api','jquery','fixtable'], function (app) {
 				var testComponents = 'init_components';
 				var testMeasurableItems = 'init_measurable_items';
 			}
-			api.GET(testComponents,function success(response){
+			api.GET(testComponents,data,function success(response){
+				console.log(response);
 				$scope.Components = response.data[0];
 			});
-			api.GET(testMeasurableItems,function success(response){
+			api.GET(testMeasurableItems,data,function success(response){
 				$scope.MeasurableItems = response.data;
 				$scope.MeasurableItemsCount = response.data.length;
 				console.log(response);
 			});
-			
-		}
+		};
+		
+		
+	
 		
 		
 		// PERIOD RADIO BUTTON EVENT HANDLER
@@ -111,8 +101,9 @@ define(['app','api','jquery','fixtable'], function (app) {
 			}else if(id == 3){
 				 var fetch = 'component_measurable_3';
 			}//
-			
+			//var fetch = 'components';
 			api.GET(fetch,data,function success(response){
+				console.log(response);
 				$scope.EditableItems = response.data;
 				var modalInstance = $uibModal.open({
 					animation: true,
@@ -130,8 +121,8 @@ define(['app','api','jquery','fixtable'], function (app) {
 				modalInstance.result.then(function () {}, function (source) {
 				
 					//Re-initialize booklets when confirmed
-					if(source==='confirm')
-						recordBook(1);
+					//if(source==='confirm')
+						//recordBook(1);
 				});
 				
 			});
@@ -284,9 +275,6 @@ define(['app','api','jquery','fixtable'], function (app) {
 		$scope.setSelectedTemplate=function(selected){
 			$scope.SelectedTemplate = selected;
 		};
-	
-	
-	
 	
 		//CANCEL EVENT HANDLER
 		$scope.cancelTemplate = function(){
