@@ -1,25 +1,3 @@
-<style>
-	.no-padding{
-		padding:0 !important;
-	}
-	
-	/* Specify styling for tooltip contents */
-	.tooltip.ps .tooltip-inner {
-		color: #880000;
-		background-color: #ffff66;
-		box-shadow: 0 6px 12px rgba(0,0,0,.175);
-	}
-	/* Hide arrow */
-	.tooltip.ps .tooltip-arrow {
-		display: none;
-	}
-	.w55px{
-		width:55px;
-	}
-	.w60px{
-		width:60px;
-	}
-</style>
 <link rel="stylesheet" href="vendors/css/fixtable.css">
 <div ng-controller="RecordBookController" ng-init="init()">
 	<div class="row" ng-show="loads">
@@ -56,14 +34,12 @@
 		
 	</div>
 	<div class="row" ng-show="erb">
-
 		<div class="btn-group">
 			<label class="btn btn-default btn-sm active" ng-model="PeriodModel" uib-btn-radio="'1st'" ng-click="selectPeriod('1',true)">1st Period</label>
 			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'2nd'" ng-click="selectPeriod('2',false)">2nd Period</label>
 			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'3rd'" ng-click="selectPeriod('3',false)">3rd Period</label>
 			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'4th'" ng-click="selectPeriod('4',false)">4th Period</label>
 		</div>
-		
 		<div class="btn-group pull-right" uib-dropdown>
 			<button type="button" class="btn btn-default btn-sm"><i class="glyphicon glyphicon-export"></i> Export</button>
 			<button type="button" class="btn btn-default btn-sm"><i class="glyphicon glyphicon-send"></i> Send to CGPS</button>
@@ -166,7 +142,7 @@
 										<a class="btn btn-success" ng-click="addNewItem()"><i class="glyphicon glyphicon-plus"></i></a>
 									</td>
 								</tr>
-								<tr ng-repeat="item in EditableItems">
+								<tr ng-repeat="item in MeasurableItems | filter:{component_id:componentId}">
 									<td><input class="form-control input-sm w60px" maxlength="5" value="{{item.header}}"></td>
 									<td><input class="form-control input-sm w55px" value="{{item.perfect_score}}"></td>
 									<td><input class="form-control input-sm w55px" value="{{item.percentage}}"></td>

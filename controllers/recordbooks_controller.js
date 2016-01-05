@@ -38,13 +38,11 @@ define(['app','api','jquery','fixtable'], function (app) {
 				var testMeasurableItems = 'init_measurable_items';
 			}
 			api.GET(testComponents,data,function success(response){
-				console.log(response);
 				$scope.Components = response.data[0];
 			});
 			api.GET(testMeasurableItems,data,function success(response){
 				$scope.MeasurableItems = response.data;
 				$scope.MeasurableItemsCount = response.data.length;
-				console.log(response);
 			});
 		};
 		
@@ -94,38 +92,24 @@ define(['app','api','jquery','fixtable'], function (app) {
 			
 		//Opening the modal
 		$scope.editMeasurable=function(data,id){
-			if(id == 1){ //FOR TESTING PURPOSES
-				 var fetch = 'component_measurable_1';
-			}else if(id == 2){
-				 var fetch = 'component_measurable_2';
-			}else if(id == 3){
-				 var fetch = 'component_measurable_3';
-			}//
-			//var fetch = 'components';
-			api.GET(fetch,data,function success(response){
-				console.log(response);
-				$scope.EditableItems = response.data;
-				var modalInstance = $uibModal.open({
-					animation: true,
-					templateUrl: 'UpdateMeasurable.html',
-					controller: 'ModalInstanceController',
-					resolve: {
-						items: function () {
-							return $scope.EditableItems;
-						}
-					  }
-				});
-				//modalInstance.opened.then(function(){$rootScope.__MODAL_OPEN=true;});
-				
-				
-				modalInstance.result.then(function () {}, function (source) {
-				
-					//Re-initialize booklets when confirmed
-					//if(source==='confirm')
-						//recordBook(1);
-				});
-				
+			var modalInstance = $uibModal.open({
+				animation: true,
+				templateUrl: 'UpdateMeasurable.html',
+				controller: 'ModalInstanceController',
+				resolve: {
+					items: function () {
+						return [$scope.MeasurableItems,id];
+					}
+				  }
 			});
+			
+			modalInstance.result.then(function () {}, function (source) {
+			
+				//Re-initialize booklets when confirmed
+				//if(source==='confirm')
+					//recordBook(1);
+			});
+				
 		};
 					
 		//FIX TABLE
@@ -149,7 +133,9 @@ define(['app','api','jquery','fixtable'], function (app) {
 	}]);
 	
 	app.register.controller('ModalInstanceController',['$scope','$rootScope','$uibModalInstance','api','items', function ($scope, $rootScope, $uibModalInstance, api,items){
-		$scope.EditableItems = items;
+	
+		$scope.MeasurableItems = items[0];
+		$scope.componentId = items[1];
 		$scope.State = 'edit';
 		
 		//CHANGE STATE EVENT HANDLER
