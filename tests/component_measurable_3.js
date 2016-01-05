@@ -7,6 +7,11 @@ define(['model'],function($model){
 				},
 				data:[
 						{
+						  "Component":{
+							"name": "Quarterly Assessment", 
+						  },
+						  "id":5,
+						  "component_id": 3,
 						  "header": "DT",
 						  "perfect_score": 100,
 						  "percentage": 10,

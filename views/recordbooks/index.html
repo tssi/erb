@@ -22,7 +22,6 @@
 </style>
 <link rel="stylesheet" href="vendors/css/fixtable.css">
 <div ng-controller="RecordBookController" ng-init="init()">
-
 	<div class="row" ng-show="loads">
 		<div class="col-md-6">
 			<div class="list-group">
@@ -40,8 +39,8 @@
 				  <div class="list-group-item text-center" ng-if="!FacultyLoads.length">
 						Loading...
 				   </div>
-					<div class="list-group-item" ng-repeat="load in FacultyLoads | filter:filterFacultyLoads" ng-click="openRecordBook({limit:100},load.id)">
-						<h4 class="list-group-item-heading">{{load.subject.description}}</h4>
+					<div class="list-group-item" ng-repeat="load in FacultyLoads | filter:filterFacultyLoads" ng-click="openRecordBook(load.id)">
+						<h4 class="list-group-item-heading">{{load.subject.description}}{{load.id}}</h4>
 						<p class="list-group-item-text">{{load.year_level.name}} - {{load.section.name}}</p>
 					</div>
 				</div>
@@ -59,10 +58,10 @@
 	<div class="row" ng-show="erb">
 
 		<div class="btn-group">
-			<label class="btn btn-default btn-sm active" ng-model="PeriodModel" uib-btn-radio="'1st'" ng-click="selectPeriod({limit:100},'1st')">1st Period</label>
-			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'2nd'" ng-click="selectPeriod({limit:100},'2nd')">2nd Period</label>
-			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'3rd'" ng-click="selectPeriod({limit:100},'3rd')">3rd Period</label>
-			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'4th'" ng-click="selectPeriod({limit:100},'4th')">4th Period</label>
+			<label class="btn btn-default btn-sm active" ng-model="PeriodModel" uib-btn-radio="'1st'" ng-click="selectPeriod('1',true)">1st Period</label>
+			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'2nd'" ng-click="selectPeriod('2',false)">2nd Period</label>
+			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'3rd'" ng-click="selectPeriod('3',false)">3rd Period</label>
+			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'4th'" ng-click="selectPeriod('4',false)">4th Period</label>
 		</div>
 		
 		<div class="btn-group pull-right" uib-dropdown>
@@ -77,10 +76,6 @@
 				<li><a href="#">Class Record</a></li>
 			</ul>
 		</div>
-
-
-		
-		
 	</div><br/>
 	<div class="row" ng-show="erb">
 		<div class="col-md-12">
@@ -118,7 +113,7 @@
 						<tbody>
 							<tr ng-repeat="student in Students | filter:filterStudents">
 								<td>
-									<input readonly="readonly" type="text" ng-model="student.full_name" uib-popover="{{student.full_name}}" popover-trigger="mouseenter" class="form-control input-sm" style="text-overflow: ellipsis;">
+									<input readonly="readonly" type="text" ng-model="student.full_name" uib-popover="{{student.full_name}}" popover-trigger="mouseenter" class="form-control input-sm" style="text-overflow: ellipsis; border: none;">
 								</td>
 							</tr>
 						</tbody>
@@ -142,50 +137,162 @@
 			</div>
 		</div>
 	</div>
-	<script type="text/ng-template" id="myModalContent.html">
+	<script type="text/ng-template" id="UpdateMeasurable.html">
 		<div class="modal-header">
-			<h3 class="modal-title">Edit </h3>
+			<h3 class="modal-title">Update Measurable Item(s)</h3>
 		</div>
 		<div class="modal-body">
 			<div class="row">
 				<div class="col-lg-8 col-lg-offset-2">
-					<table class="table table-bordered" id="EditMeasurableTable">
-						<thead>
-							<tr>
-								<th class="w60px text-center">Header</th>
-								<th class="w55px text-center">P.Score</th>
-								<th class="w55px text-center">%</th>
-								<th class="w55px text-center">Base</th>
-								<th class="text-center"><a><i class="glyphicon glyphicon-sort text-center"></i></a></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td><input class="form-control input-sm w60px" maxlength="5"></td>
-								<td><input class="form-control input-sm w55px"></td>
-								<td><input class="form-control input-sm w55px"></td>
-								<td><input class="form-control input-sm w55px"></td>
-								<td class="text-center">
-									<a><i class="glyphicon glyphicon-plus-sign"></i></a>
-								</td>
-							</tr>
-							<tr ng-repeat="item in EditableItems">
-								<td><input class="form-control input-sm w60px" maxlength="5" value="{{item.header}}"></td>
-								<td><input class="form-control input-sm w55px" value="{{item.perfect_score}}"></td>
-								<td><input class="form-control input-sm w55px" value="{{item.percentage}}"></td>
-								<td><input class="form-control input-sm w55px" value="{{item.base}}"></td>
-								<td class="text-center">
-									<a><i class="glyphicon glyphicon-remove-circle"></i></a>
-								</td>
-							</tr>
-						</tbody>
-					</table>
+				
+					<div class="list-group-item" ng-show="State==='edit'">
+						<table class="table table-bordered table-condensed table-sort">
+							<thead>
+								<tr>
+									<th class="w60px text-center">Header</th>
+									<th class="w55px text-center">P.Score</th>
+									<th class="w55px text-center">%</th>
+									<th class="w55px text-center">Base</th>
+									<th class="text-center"><a class="btn btn-default" ng-click="updateState('sort')"><i class="glyphicon glyphicon-sort text-center"></i></a></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td><input class="form-control input-sm w60px" maxlength="5" ng-model="NewItem.header"></td>
+									<td><input class="form-control input-sm w55px" ng-model="NewItem.perfect_score"></td>
+									<td><input class="form-control input-sm w55px" ng-model="NewItem.percentage"></td>
+									<td><input class="form-control input-sm w55px" ng-model="NewItem.base"></td>
+									<td class="text-center">
+										<a class="btn btn-success" ng-click="addNewItem()"><i class="glyphicon glyphicon-plus"></i></a>
+									</td>
+								</tr>
+								<tr ng-repeat="item in EditableItems">
+									<td><input class="form-control input-sm w60px" maxlength="5" value="{{item.header}}"></td>
+									<td><input class="form-control input-sm w55px" value="{{item.perfect_score}}"></td>
+									<td><input class="form-control input-sm w55px" value="{{item.percentage}}"></td>
+									<td><input class="form-control input-sm w55px" value="{{item.base}}"></td>
+									<td class="col-md-1"><button class="btn btn-danger" ng-click="removeItem($index,item.id)"><span class="glyphicon glyphicon-remove"></span></button></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="list-group-item" ng-show="State==='sort'">
+						<table ui-tree class="table table-bordered table-condensed table-sort">
+							<thead>
+								<tr>
+									<th class="w60px text-center">Header</th>
+									<th class="w55px text-center">P.Score</th>
+									<th class="w55px text-center">%</th>
+									<th class="w55px text-center">Base</th>
+									<th class="text-center"><a class="btn btn-danger" ng-click="updateState('edit')"><i class="glyphicon glyphicon-remove text-center"></i></a></th>
+								</tr>
+							</thead>
+							<tbody ui-tree-nodes ng-model="EditableItems">
+								<tr>
+									<td colspan="4">
+										<div class="help-text"><a href="" class="btn btn-xs btn-default disabled"><span class="glyphicon glyphicon-sort"></span></a> Click and drag to reorder.</div>
+									</td>
+									<td class="text-center">
+										<a class="btn btn-success"><i class="glyphicon glyphicon-floppy-disk"></i></a>
+									</td>
+								</tr>
+								<tr ng-repeat="item in EditableItems" ui-tree-node>
+									<td><input class="form-control input-sm w60px" maxlength="5" value="{{item.header}}"></td>
+									<td><input class="form-control input-sm w55px" value="{{item.perfect_score}}"></td>
+									<td><input class="form-control input-sm w55px" value="{{item.percentage}}"></td>
+									<td><input class="form-control input-sm w55px" value="{{item.base}}"></td>
+									<td class="col-md-1"><button class="btn btn-default" ui-tree-handle><span class="glyphicon glyphicon-sort"></span></button></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>
 		<div class="modal-footer">
 			<button class="btn btn-default pull-left" type="button" ng-click="cancelEdit()">Cancel</button>
 			<button class="btn btn-primary" type="button" ng-click="confirmEdit()">Confirm</button>
+		</div>
+	</script>
+	<script type="text/ng-template" id="TemplateModal.html">
+		<div class="modal-header">
+			<h3 class="modal-title">Choose Template</h3>
+		</div>
+		<div class="modal-body">
+			<div class="row">
+				<div class="col-md-12">
+					<ul class="nav nav-pills nav-wizard">
+						<li ng-class="{active:ActiveStep===step.id}" ng-repeat="step in Steps" ng-click="updateStep(step)">
+							<div ng-if="!$first" class="nav-wedge"></div>
+							<a data-toggle="tab"><span class="badge">{{step.id}}</span> {{step.description}}</a>
+							<div ng-if="!$last" class="nav-arrow"></div>
+						</li>
+					</ul>
+				</div>	
+				<div class="col-md-12">
+					<button class="btn btn-primary btn-fab top right" ng-click="nextStep()">
+					<span class="glyphicon " ng-class="{'glyphicon-chevron-right':ActiveStep!=3,'glyphicon-ok': ActiveStep===3}" aria-hidden="true"></span>
+					</button>
+					<div class="list-group" ng-show="ActiveStep===1">
+						<div class="list-group-item list-group-header">
+							<button class="btn btn-xs btn-danger" ng-click="cancelTemplate()"> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+							<button class="btn btn-xs btn-warning" ng-click="prevStep()"> <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
+						</div>
+						<div class="list-group-item list-group-header">
+							<h5 class="ng-binding">Select Action</h5>
+						</div>
+						<div class="list-group-item ng-class:{active:action.id===SelectedAction.id}" ng-repeat="action in Actions" ng-click="setSelectedAction(action)">
+							<h4 class="list-group-item-heading"><i ng-class="action.icon"></i> {{action.title}}</h4>
+							<p class="list-group-item-text">{{action.description}}</p>
+						</div>
+					</div>
+					<div class="list-group" ng-show="ActiveStep===2">
+						<div class="list-group-item list-group-header">
+							<button class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+							<button class="btn btn-xs btn-warning" ng-click="prevStep()"> <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
+						</div>
+						<div ng-show="SelectedAction.id==1" class="list-group-item list-group-header">
+							<h5 class="ng-binding">Select Action</h5>
+						</div>
+						<div ng-show="SelectedAction.id==3" class="list-group-item list-group-header">
+							<h5 class="ng-binding">Select Template</h5>
+						</div>
+
+						<div ng-show="SelectedAction.id==1" class="list-group-item ng-class:{active:option.id===SelectedPrevTempOption.id}" ng-repeat="option in PrevTempOptions" ng-click="setSelectedPrevTempOption(option)">
+							<h4 class="list-group-item-heading">{{option.title}}</h4>
+							<p class="list-group-item-text">{{option.description}}</p>
+						</div>
+						<div ng-show="SelectedAction.id==3" class="list-group-item ng-class:{active:template.name===SelectedTemplate.name}" ng-repeat="template in Templates" ng-click="setSelectedTemplate(template)">
+							<h4 class="list-group-item-heading">{{template.name}}</h4>
+							<p class="list-group-item-text">School Year: {{template.sy}} - {{template.sy+1}} </p>
+						</div>
+						
+					</div>
+					<div class="list-group" ng-show="ActiveStep===3">
+						<div class="list-group-item list-group-header">
+							<button class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+							<button class="btn btn-xs btn-warning" ng-click="prevStep()"> <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
+						</div>
+						<div class="list-group-canvas">
+							<div class="list-group-item">
+								<div class="empty-state">
+									<div class="well">
+										<div class="empty-state-icon">
+											<i class="glyphicon glyphicon-thumbs-up"></i>
+										</div>
+										<h4>Almost there!</h4>
+									</div>
+									<div class="empty-state-help alert alert-info"> 
+										<span class="empty-state-action-icon glyphicon glyphicon-ok"></span> Click to confirm.
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
 		</div>
 	</script>
 </div>

@@ -28,7 +28,7 @@ define(['model'],function($model){
 						}
 					},
 					{
-						"id": 1,
+						"id": 2,
 						"subject":{
 						  "id":"FILIP1",
 						  "name":" Filipino",
@@ -49,7 +49,7 @@ define(['model'],function($model){
 						}
 					},
 					{
-						"id": 1,
+						"id": 3,
 						"subject":{
 						  "id":"SCIENCE1",
 						  "name":" Science",
@@ -70,7 +70,7 @@ define(['model'],function($model){
 						}
 					},
 					{
-						"id": 1,
+						"id": 4,
 						"subject":{
 						  "id":"MATH1",
 						  "name":"Mathematics",

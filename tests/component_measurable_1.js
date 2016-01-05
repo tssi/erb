@@ -6,7 +6,11 @@ define(['model'],function($model){
 					title: 'Measurable Items',
 				},
 				data:[
-						{
+						{	
+							"Component":{
+								"name": "Written Work",
+							},
+							"id":1,
 							"component_id": 1,
 							"header": "Q1",
 							"perfect_score": 10,
@@ -15,6 +19,7 @@ define(['model'],function($model){
 							"is_item":true,
 						},
 						{ 
+							"id":2,
 							"component_id": 1,
 							"header": "Q2",
 							"perfect_score": 10,
