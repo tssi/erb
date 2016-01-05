@@ -48,3 +48,24 @@
 	border-radius: 0px;
 }*/
 
+
+.no-padding{
+	padding:0 !important;
+}
+
+/* Specify styling for tooltip contents */
+.tooltip.ps .tooltip-inner {
+	color: #880000;
+	background-color: #ffff66;
+	box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+/* Hide arrow */
+.tooltip.ps .tooltip-arrow {
+	display: none;
+}
+.w55px{
+	width:55px;
+}
+.w60px{
+	width:60px;
+}
