@@ -181,7 +181,7 @@ define(['app','api','jquery','fixtable'], function (app) {
 
 		
 		//CANCEL EVENT HANDLER
-		$scope.cancelEdit = function(){
+		$scope.closeEdit = function(){
 			$rootScope.__MODAL_OPEN=false;
 			$uibModalInstance.dismiss('cancel');
 		};
