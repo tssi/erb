@@ -35,10 +35,10 @@
 	</div>
 	<div class="row" ng-show="erb">
 		<div class="btn-group">
-			<label class="btn btn-default btn-sm active" ng-model="PeriodModel" uib-btn-radio="'1st'" ng-click="selectPeriod('1',true)">1st Period</label>
-			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'2nd'" ng-click="selectPeriod('2',false)">2nd Period</label>
-			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'3rd'" ng-click="selectPeriod('3',false)">3rd Period</label>
-			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'4th'" ng-click="selectPeriod('4',false)">4th Period</label>
+			<label class="btn btn-default btn-sm active" ng-model="PeriodModel" uib-btn-radio="'1st'" ng-click="selectPeriod('1',true,{limit:100})">1st Period</label>
+			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'2nd'" ng-click="selectPeriod('2',false,{limit:100})">2nd Period</label>
+			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'3rd'" ng-click="selectPeriod('3',false,{limit:100})">3rd Period</label>
+			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'4th'" ng-click="selectPeriod('4',false,{limit:100})">4th Period</label>
 		</div>
 		<div class="btn-group pull-right" uib-dropdown>
 			<button type="button" class="btn btn-default btn-sm"><i class="glyphicon glyphicon-export"></i> Export</button>
@@ -62,7 +62,7 @@
 							<tr >
 								<th ng-repeat="component in Components" colspan="{{component.measurable_item_count}}">
 									<div class=" btn-group btn-group-xs pull-right">
-										<a class="btn btn-default" tooltip-placement="bottom" uib-tooltip="Add / Edit Measurable Item" ng-click="editMeasurable({limit:100},component.id)"><i class="glyphicon glyphicon-edit"></i></a>
+										<a class="btn btn-default" tooltip-placement="bottom" uib-tooltip="Add / Edit Measurable Item" ng-click="editMeasurable({limit:100},component.id,component.measurable_item_count)"><i class="glyphicon glyphicon-edit"></i></a>
 									</div>{{component.name}}
 								</th>
 								<th rowspan="2" class="text-center"><a uib-tooltip="Summary">SUM</a></th>
@@ -103,7 +103,6 @@
 									<input type="text" class="form-control input-sm" ng-if="item.is_item">
 									<span ng-if="!item.is_item"></span>
 								</td>
-								
 								<td></td>
 								<td></td>
 							</tr>
@@ -139,7 +138,7 @@
 									<td><input class="form-control input-sm w55px" ng-model="NewItem.percentage"></td>
 									<td><input class="form-control input-sm w55px" ng-model="NewItem.base"></td>
 									<td class="text-center">
-										<a class="btn btn-success" ng-click="addNewItem()"><i class="glyphicon glyphicon-plus"></i></a>
+										<a class="btn btn-success" ng-click="addNewItem(componentId)"><i class="glyphicon glyphicon-plus"></i></a>
 									</td>
 								</tr>
 								<tr ng-repeat="item in MeasurableItems | filter:{component_id:componentId}">
@@ -187,7 +186,6 @@
 		</div>
 		<div class="modal-footer">
 			<button class="btn btn-default pull-left" type="button" ng-click="cancelEdit()">Cancel</button>
-			<button class="btn btn-primary" type="button" ng-click="confirmEdit()">Confirm</button>
 		</div>
 	</script>
 	<script type="text/ng-template" id="TemplateModal.html">

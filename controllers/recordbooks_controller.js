@@ -3,8 +3,8 @@ define(['app','api','jquery','fixtable'], function (app) {
     app.register.controller('RecordBookController',['$scope','$rootScope','api','$uibModal', function ($scope,$rootScope,api,$uibModal) {
 		$scope.init = function(){
 			$rootScope.__MODULE_NAME ='RecordBook';
-			$scope.initFacultyLoads({limit:10});
-			$scope.initStudents({limit:10});
+			$scope.initFacultyLoads({limit:100});
+			$scope.initStudents({limit:100});
 			$scope.loads = true;
 			$scope.erb = false;
 			
@@ -27,6 +27,11 @@ define(['app','api','jquery','fixtable'], function (app) {
 		$scope.initStudents = function(data){api.GET('students',data,function success(response){$scope.Students = response.data})}		
 	
 		$scope.openRecordBook = function(data,load_id){
+			$scope.load_id = load_id;
+			recordBook(data,load_id);
+		};
+		
+		function recordBook(data,load_id){
 			$scope.loads = false;
 			$scope.erb = true;
 			//FOR TESTING PURPOSES
@@ -43,15 +48,15 @@ define(['app','api','jquery','fixtable'], function (app) {
 			api.GET(testMeasurableItems,data,function success(response){
 				$scope.MeasurableItems = response.data;
 				$scope.MeasurableItemsCount = response.data.length;
+				console.log($scope.MeasurableItems);
+				console.log($scope.MeasurableItemsCount);
 			});
-		};
-		
-		
-	
+			
+		}
 		
 		
 		// PERIOD RADIO BUTTON EVENT HANDLER
-		$scope.selectPeriod = function(period,hasTemplate){
+		$scope.selectPeriod = function(period,hasTemplate,data){
 			
 			if(!hasTemplate){
 				var modalInstance = $uibModal.open({
@@ -64,7 +69,16 @@ define(['app','api','jquery','fixtable'], function (app) {
 					}
 				  }
 				});
-				modalInstance.opened.then(function(){$rootScope.__MODAL_OPEN=true;});
+				
+				modalInstance.result.then(function () {}, function (source) {
+					//Re-initialize
+					if(source==='confirm'){
+							
+						recordBook(data,'2');
+				
+					}
+					
+				});
 					
 			}
 			
@@ -91,24 +105,31 @@ define(['app','api','jquery','fixtable'], function (app) {
 		};
 			
 		//Opening the modal
-		$scope.editMeasurable=function(data,id){
-			var modalInstance = $uibModal.open({
-				animation: true,
-				templateUrl: 'UpdateMeasurable.html',
-				controller: 'ModalInstanceController',
-				resolve: {
-					items: function () {
-						return [$scope.MeasurableItems,id];
+		$scope.editMeasurable=function(data,componentId,itemCount){
+		//	api.GET('measurable_items',data,function success(response){
+			//	$scope.EditableItems = response.data;
+				var modalInstance = $uibModal.open({
+					animation: true,
+					templateUrl: 'UpdateMeasurable.html',
+					controller: 'ModalInstanceController',
+					resolve: {
+						items: function () {
+							return [$scope.MeasurableItems,componentId,itemCount];
+						}
+					  }
+				});
+				
+				
+				modalInstance.result.then(function () {}, function (source) {
+					//Re-initialize
+					if(source==='confirm'){
+						
+						//console.log($scope.MeasurableItems);
+						//recordBook(data,$scope.load_id);
 					}
-				  }
-			});
-			
-			modalInstance.result.then(function () {}, function (source) {
-			
-				//Re-initialize booklets when confirmed
-				//if(source==='confirm')
-					//recordBook(1);
-			});
+					
+				});
+		//	});
 				
 		};
 					
@@ -136,6 +157,7 @@ define(['app','api','jquery','fixtable'], function (app) {
 	
 		$scope.MeasurableItems = items[0];
 		$scope.componentId = items[1];
+		$scope.itemCount = items[2];
 		$scope.State = 'edit';
 		
 		//CHANGE STATE EVENT HANDLER
@@ -144,46 +166,28 @@ define(['app','api','jquery','fixtable'], function (app) {
 		};
 		
 		//ADD NEW MEASURABLE ITEM EVENT HANDLER
-		$scope.addNewItem=function(){
-			$scope.EditableItems.unshift($scope.NewItem);
-			
-			api.POST('measurable_items',$scope.EditableItems,function success(response){
-				console.log(response);
-			});
-		
+		$scope.addNewItem=function(componentId){
+			$scope.NewItem.is_item = true;
+			$scope.NewItem.component_id = componentId;
+			$scope.MeasurableItems.unshift($scope.NewItem);
 			$scope.NewItem={};
 		};
 		
 		//REMOVE MEASURABLE ITEM EVENT HANDLER
 		$scope.removeItem=function(index,id){
-			$scope.EditableItems.splice(index, 1);
+			$scope.MeasurableItems.splice(index, 1);
 		};
 		
-		//CONFIRM EVENT HANDLER
-		$scope.confirmEdit = function(){
-			$scope.MeasurableItems = $scope.EditableItems;
-			api.POST('measurable_items',$scope.MeasurableItems,function success(response){
-				$uibModalInstance.dismiss('confirm');
-			});
-		
-			
-			$uibModalInstance.dismiss('confirm');
-		};
+
 		
 		//CANCEL EVENT HANDLER
 		$scope.cancelEdit = function(){
 			$rootScope.__MODAL_OPEN=false;
 			$uibModalInstance.dismiss('cancel');
-			//REFETCH DATA
-			/*api.GET('measurable_items',data,function success(response){
-				$scope.MeasurableItems = response.data;
-			});	*/
 		};
 	}]);
 
 	app.register.controller('TemplateModalController',['$scope','$rootScope','$uibModalInstance','api','period', function ($scope, $rootScope, $uibModalInstance, api,period){
-		console.log($rootScope);
-		
 		$scope.ActiveStep=1;
 		$scope.Steps = [
 				{id:1, description:"Step 1"},
@@ -225,18 +229,7 @@ define(['app','api','jquery','fixtable'], function (app) {
 			}
 			if($scope.ActiveStep===3){
 				$rootScope.__MODAL_OPEN=false;
-				$uibModalInstance.dismiss('cancel');
-				
-				
-				//api.GET('init_components',function success(response){
-				//	$scope.Components = response.data[0];
-				//});
-				//api.GET('init_measurable_items',function success(response){
-				//	$scope.MeasurableItems = response.data;
-				//	$scope.MeasurableItemsCount = response.data.length;
-				//});
-				
-				
+				$uibModalInstance.dismiss('confirm');
 			};
 			if($scope.ActiveStep<$scope.Steps.length){
 				$scope.ActiveStep++;
