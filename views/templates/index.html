@@ -136,27 +136,80 @@
 						</div>
 					</div>
 					
-					<table ui-tree class="table table-bordered table-condensed table-sort" >
-						<thead>
-							<tr>
-								<th colspan="4"><center>General Components</center></th>
-							</tr>
-							<tr>
-								<th>No.</th>
-								<th>Description</th>
-								<th>Percentage</th>
-								<th class="col-md-1"><button class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button></th>
-							</tr>
-						</thead>
-						<tbody ui-tree-nodes >
-							<tr ui-tree-node>
-								<td class="col-md-1">1</td>
-								<td class="col-md-6">WRITTEN WORKS</td>
-								<td class="col-md-5">50%</td>
-								<td class="col-md-1"><button class="btn  btn-default" ui-tree-handle><span class="glyphicon glyphicon-sort"></span></button></td>
-							</tr>
-						</tbody>
-					</table>
+					<div ng-show="State==='edit'">
+						<table class="table table-bordered table-condensed table-sort">
+							<thead>
+								<tr>
+									<th colspan="4"><center>General Components</center></th>
+								</tr>
+								<tr>
+									<th class="col-md-8">Components</th>
+									<th class="col-md-2">%</th>
+									<th class="text-center col-md-2"><a class="btn btn-default" ng-click="updateState('sort')"><i class="glyphicon glyphicon-sort text-center"></i></a></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<select class="form-control input-sm w55px" ng-model="NewItem.component_id" required="required" >
+											<option value="">Select Component</option> 
+											<option ng-repeat="component in Components" value="{{component.id}}">{{component.name}}</option>
+										</select>	
+									</td>
+									<td><input class="form-control input-sm w55px" ng-model="NewItem.percentage"></td>
+									<td class="text-center">
+										<a class="btn btn-success" ng-click="addNewItem(NewItem)"><i class="glyphicon glyphicon-plus"></i></a>
+									</td>
+								</tr>
+								<tr ng-repeat="item in GeneralComponents">
+									<td>
+										<select class="form-control input-sm w55px" ng-model="item.component_id">
+											<option ng-repeat="component in Components" value="{{component.id}}" >{{component.name}}</option>
+										</select>
+									</td>
+									<td><input class="form-control input-sm w55px" value="{{item.percentage}}"></td>
+									<td class="col-md-1 text-center">
+										<button class="btn btn-primary btn-xs" ng-click="addSubcomp()"><span class="glyphicon glyphicon-plus"></span></button>
+										<button class="btn btn-danger btn-xs" ng-click="removeItem($index)"><span class="glyphicon glyphicon-remove"></span></button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div  ng-show="State==='sort'">
+						<table ui-tree class="table table-bordered table-condensed table-sort">
+							<thead>
+								<tr>
+									<th colspan="4"><center>General Components</center></th>
+								</tr>
+								<tr>
+									<th class="col-md-9">Components</th>
+									<th class="col-md-2">%</th>
+									<th class="col-md-1"><a class="btn btn-danger" ng-click="updateState('edit')"><i class="glyphicon glyphicon-remove text-center"></i></a></th>
+								</tr>
+							</thead>
+							<tbody ui-tree-nodes ng-model="GeneralComponents">
+								<tr>
+									<td colspan="2">
+										<div class="help-text"><a href="" class="btn btn-xs btn-default disabled"><span class="glyphicon glyphicon-sort"></span></a> Click and drag to reorder.</div>
+									</td>
+									<td class="text-center">
+										<a class="btn btn-success"><i class="glyphicon glyphicon-floppy-disk"></i></a>
+									</td>
+								</tr>
+								<tr ng-repeat="item in GeneralComponents" ui-tree-node>
+									<td>
+										<select class="form-control input-sm w55px" ng-model="item.component_id" required="required" >
+											<option value="">Select Component</option> 
+											<option ng-repeat="component in Components" value="{{component.id}}">{{component.name}}</option>
+										</select>	
+									</td>
+									<td><input class="form-control input-sm w55px" value="{{item.percentage}}"></td>
+									<td class="col-md-1"><button class="btn btn-default" ui-tree-handle><span class="glyphicon glyphicon-sort"></span></button></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>
