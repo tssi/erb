@@ -132,21 +132,21 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td><input class="form-control input-sm md" maxlength="5" ng-model="NewItem.header"></td>
-									<td><input class="form-control input-sm sm" ng-model="NewItem.perfect_score"></td>
-									<td><input class="form-control input-sm sm" ng-model="NewItem.percentage"></td>
-									<td><input class="form-control input-sm sm" ng-model="NewItem.base"></td>
-									<td class="text-center">
-										<a class="btn btn-success" ng-click="addNewItem(componentId)"><i class="glyphicon glyphicon-plus"></i></a>
-									</td>
-								</tr>
 								<tr ng-repeat="item in MeasurableItems | filter:componentId">
 									<td><input class="form-control input-sm md" maxlength="5" value="{{item.MeasurableItem.header}}"></td>
 									<td><input class="form-control input-sm sm" value="{{item.MeasurableItem.perfect_score}}"></td>
 									<td><input class="form-control input-sm sm" value="{{item.MeasurableItem.percentage}}"></td>
 									<td><input class="form-control input-sm sm" value="{{item.MeasurableItem.base}}"></td>
 									<td class="col-md-1"><button class="btn btn-danger" ng-click="removeItem($index,item.id)"><span class="glyphicon glyphicon-remove"></span></button></td>
+								</tr>
+								<tr>
+									<td><input class="form-control input-sm md" maxlength="5" ng-model="NewItem.MeasurableItem.header"></td>
+									<td><input class="form-control input-sm sm" ng-model="NewItem.MeasurableItem.perfect_score"></td>
+									<td><input class="form-control input-sm sm" ng-model="NewItem.MeasurableItem.percentage"></td>
+									<td><input class="form-control input-sm sm" ng-model="NewItem.MeasurableItem.base"></td>
+									<td class="text-center">
+										<a class="btn btn-success" ng-click="addNewItem(componentId)"><i class="glyphicon glyphicon-plus"></i></a>
+									</td>
 								</tr>
 							</tbody>
 						</table>

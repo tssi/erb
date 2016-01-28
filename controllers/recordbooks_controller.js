@@ -133,9 +133,6 @@ define(['app','api','jquery','fixtable'], function (app) {
 			
 		//Opening the modal
 		$scope.editMeasurable=function(data,componentId,itemCount){
-			console.log(data);
-			console.log(componentId);
-			console.log(itemCount);
 			
 		//	api.GET('measurable_items',data,function success(response){
 			//	$scope.EditableItems = response.data;
@@ -207,7 +204,7 @@ define(['app','api','jquery','fixtable'], function (app) {
 		$scope.addNewItem=function(componentId){
 			$scope.NewItem.is_item = true;
 			$scope.NewItem.component_id = componentId;
-			$scope.MeasurableItems.unshift($scope.NewItem);
+			$scope.MeasurableItems.push($scope.NewItem);
 			$scope.NewItem={};
 		};
 		
