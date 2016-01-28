@@ -133,10 +133,10 @@
 							</thead>
 							<tbody>
 								<tr ng-repeat="item in MeasurableItems | filter:componentId">
-									<td><input class="form-control input-sm md" maxlength="5" value="{{item.MeasurableItem.header}}"></td>
-									<td><input class="form-control input-sm sm" value="{{item.MeasurableItem.perfect_score}}"></td>
-									<td><input class="form-control input-sm sm" value="{{item.MeasurableItem.percentage}}"></td>
-									<td><input class="form-control input-sm sm" value="{{item.MeasurableItem.base}}"></td>
+									<td><input class="form-control input-sm md" maxlength="5" ng-model="item.MeasurableItem.header"></td>
+									<td><input class="form-control input-sm sm" ng-model="item.MeasurableItem.perfect_score"></td>
+									<td><input class="form-control input-sm sm" ng-model="item.MeasurableItem.percentage"></td>
+									<td><input class="form-control input-sm sm" ng-model="item.MeasurableItem.base"></td>
 									<td class="col-md-1"><button class="btn btn-danger" ng-click="removeItem($index,item.id)"><span class="glyphicon glyphicon-remove"></span></button></td>
 								</tr>
 								<tr>
@@ -163,6 +163,13 @@
 								</tr>
 							</thead>
 							<tbody ui-tree-nodes ng-model="MeasurableItems">
+								<tr ng-repeat="item in MeasurableItems | filter:componentId" ui-tree-node>
+									<td><input class="form-control input-sm w60px" maxlength="5" ng-model="item.MeasurableItem.header"></td>
+									<td><input class="form-control input-sm w55px" ng-model="item.MeasurableItem.perfect_score"></td>
+									<td><input class="form-control input-sm w55px" ng-model="item.MeasurableItem.percentage"></td>
+									<td><input class="form-control input-sm w55px" ng-model="item.MeasurableItem.base"></td>
+									<td class="col-md-1"><button class="btn btn-default" ui-tree-handle><span class="glyphicon glyphicon-sort"></span></button></td>
+								</tr>
 								<tr>
 									<td colspan="4">
 										<div class="help-text"><a href="" class="btn btn-xs btn-default disabled"><span class="glyphicon glyphicon-sort"></span></a> Click and drag to reorder.</div>
@@ -170,13 +177,6 @@
 									<td class="text-center">
 										<a class="btn btn-success"><i class="glyphicon glyphicon-floppy-disk"></i></a>
 									</td>
-								</tr>
-								<tr ng-repeat="item in MeasurableItems | filter:componentId" ui-tree-node>
-									<td><input class="form-control input-sm w60px" maxlength="5" value="{{item.MeasurableItem.header}}"></td>
-									<td><input class="form-control input-sm w55px" value="{{item.MeasurableItem.perfect_score}}"></td>
-									<td><input class="form-control input-sm w55px" value="{{item.MeasurableItem.percentage}}"></td>
-									<td><input class="form-control input-sm w55px" value="{{item.MeasurableItem.base}}"></td>
-									<td class="col-md-1"><button class="btn btn-default" ui-tree-handle><span class="glyphicon glyphicon-sort"></span></button></td>
 								</tr>
 							</tbody>
 						</table>
