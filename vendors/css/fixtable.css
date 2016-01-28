@@ -63,9 +63,9 @@
 .tooltip.ps .tooltip-arrow {
 	display: none;
 }
-.w55px{
-	width:55px;
+.md{
+	width:80px;
 }
-.w60px{
-	width:60px;
+.sm{
+	width:70px;
 }

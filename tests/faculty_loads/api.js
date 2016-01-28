@@ -1,0 +1,11 @@
+"use strict";
+define(['model'],function($model){
+	return new $model(
+			{
+				meta:{
+					title: 'Faculty Loadings',
+				},
+				data:[{"FacultyLoad":{"id":"2","subject_id":"HSFILIPIN7","faculty_id":"1","school_year_id":"2015","section_id":"1001"},"Subject":{"id":"HSFILIPIN7","year_level_id":"G7","educ_level_id":"HS","name":"Filipino","description":"Filipino","default_unit":"1","alias":"Fil","user_id":null,"created":"2015-11-09 23:02:04","modified":"2015-11-09 23:02:04"},"Faculty":{"id":"1","last_name":"User","first_name":"Super","middle_name":" ","user_id":"1","is_active":"1","created":"2015-10-07 12:45:25","modified":"2015-10-07 14:00:21"},"SchoolYear":{"id":"2015","name":"2015-2016","is_default":"1"},"Section":{"id":"1001","name":"PILOT","alias":null,"year_level_id":"10","type":"R","order_index":"2"},"Recordbook":[{"id":"1","faculty_load_id":"2"}]},{"FacultyLoad":{"id":"3","subject_id":"HSMATHEMT7","faculty_id":"1","school_year_id":"2015","section_id":"1001"},"Subject":{"id":"HSMATHEMT7","year_level_id":"G7","educ_level_id":"HS","name":"Mathematics","description":"Mathematics","default_unit":"1","alias":"Math","user_id":null,"created":"2015-11-09 23:02:04","modified":"2015-11-09 23:02:04"},"Faculty":{"id":"1","last_name":"User","first_name":"Super","middle_name":" ","user_id":"1","is_active":"1","created":"2015-10-07 12:45:25","modified":"2015-10-07 14:00:21"},"SchoolYear":{"id":"2015","name":"2015-2016","is_default":"1"},"Section":{"id":"1001","name":"PILOT","alias":null,"year_level_id":"10","type":"R","order_index":"2"},"Recordbook":[{"id":"2","faculty_load_id":"3"}]},{"FacultyLoad":{"id":"4","subject_id":"HSENGLISH7","faculty_id":"1","school_year_id":"2013","section_id":"1001"},"Subject":{"id":"HSENGLISH7","year_level_id":"G7","educ_level_id":"HS","name":"English","description":"English","default_unit":"1","alias":"Eng","user_id":null,"created":"2015-11-09 23:02:04","modified":"2015-11-09 23:02:04"},"Faculty":{"id":"1","last_name":"User","first_name":"Super","middle_name":" ","user_id":"1","is_active":"1","created":"2015-10-07 12:45:25","modified":"2015-10-07 14:00:21"},"SchoolYear":{"id":"2013","name":"2013-2014","is_default":"0"},"Section":{"id":"1001","name":"PILOT","alias":null,"year_level_id":"10","type":"R","order_index":"2"},"Recordbook":[{"id":"3","faculty_load_id":"4"}]}]
+			}
+		);
+});

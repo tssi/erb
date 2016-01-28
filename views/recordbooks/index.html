@@ -17,9 +17,9 @@
 				  <div class="list-group-item text-center" ng-if="!FacultyLoads.length">
 						Loading...
 				   </div>
-					<div class="list-group-item" ng-repeat="load in FacultyLoads | filter:filterFacultyLoads" ng-click="openRecordBook({limit:100},load.id)">
-						<h4 class="list-group-item-heading">{{load.subject.description}}{{load.id}}</h4>
-						<p class="list-group-item-text">{{load.year_level.name}} - {{load.section.name}}</p>
+					<div class="list-group-item" ng-repeat="load in FacultyLoads | filter:filterFacultyLoads" ng-click="openRecordBook({limit:100,data:load,PeriodId:Period})">
+						<h4 class="list-group-item-heading">{{load.Subject.description}}</h4>
+						<p class="list-group-item-text">{{load.Subject.educ_level_id}} | {{load.Subject.year_level_id}} - {{load.Section.name}}</p>
 					</div>
 				</div>
 				<div class="list-group-item list-group-search-box">
@@ -35,10 +35,10 @@
 	</div>
 	<div class="row" ng-show="erb">
 		<div class="btn-group">
-			<label class="btn btn-default btn-sm active" ng-model="PeriodModel" uib-btn-radio="'1st'" ng-click="selectPeriod('1',true,{limit:100})">1st Period</label>
-			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'2nd'" ng-click="selectPeriod('2',false,{limit:100})">2nd Period</label>
-			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'3rd'" ng-click="selectPeriod('3',false,{limit:100})">3rd Period</label>
-			<label class="btn btn-default btn-sm" ng-model="PeriodModel" uib-btn-radio="'4th'" ng-click="selectPeriod('4',false,{limit:100})">4th Period</label>
+			<label class="btn btn-default btn-sm" ng-model="Period" uib-btn-radio="'1'" ng-click="selectPeriod('1',true,{limit:100})">1st Period</label>
+			<label class="btn btn-default btn-sm" ng-model="Period" uib-btn-radio="'2'" ng-click="selectPeriod('2',false,{limit:100})">2nd Period</label>
+			<label class="btn btn-default btn-sm" ng-model="Period" uib-btn-radio="'3'" ng-click="selectPeriod('3',false,{limit:100})">3rd Period</label>
+			<label class="btn btn-default btn-sm" ng-model="Period" uib-btn-radio="'4'" ng-click="selectPeriod('4',false,{limit:100})">4th Period</label>
 		</div>
 		<div class="btn-group pull-right" uib-dropdown>
 			<button type="button" class="btn btn-default btn-sm"><i class="glyphicon glyphicon-export"></i> Export</button>
@@ -60,24 +60,24 @@
 					<table class="table table-bordered">
 						<thead>
 							<tr >
-								<th ng-repeat="component in Components" colspan="{{component.measurable_item_count}}">
+								<th ng-repeat="c in Components" colspan="{{c.measurable_item_count}}">
 									<div class=" btn-group btn-group-xs pull-right">
-										<a class="btn btn-default" tooltip-placement="bottom" uib-tooltip="Add / Edit Measurable Item" ng-click="editMeasurable({limit:100},component.id,component.measurable_item_count)"><i class="glyphicon glyphicon-edit"></i></a>
-									</div>{{component.name}}
+										<a class="btn btn-default" tooltip-placement="bottom" uib-tooltip="Add / Edit Measurable Item" ng-click="editMeasurable({limit:100},c.general_components.id,c.measurable_item_count)"><i class="glyphicon glyphicon-edit"></i></a>
+									</div>{{c.general_components.name}}
 								</th>
 								<th rowspan="2" class="text-center"><a uib-tooltip="Summary">SUM</a></th>
 								<th rowspan="2" class="text-center"><a uib-tooltip="Quarterly Grade">Q.GR</a></th>
 							</tr>
 							<tr>
 								<th class="text-center" ng-repeat="item in MeasurableItems">
-									<a uib-tooltip="Perfect Score: {{item.perfect_score}}" tooltip-class="ps" ng-if="item.is_item">
-										{{item.header}}
+									<a uib-tooltip="Perfect Score: {{item.MeasurableItem.perfect_score}}" tooltip-class="ps" ng-if="item.MeasurableItem.is_item">
+										{{item.MeasurableItem.header}}	
 									</a>
-									<span ng-if="!item.is_item && !item.is_abbrev" >
-										{{item.header}}
+									<span ng-if="!item.MeasurableItem.is_item && !item.MeasurableItem.is_abbrev" >
+										{{item.MeasurableItem.header}}	
 									</span>
-									<span ng-if="!item.is_item && item.is_abbrev" >
-										<a uib-tooltip="{{item.tooltip}}">{{item.header}}</a>
+									<span ng-if="!item.MeasurableItem.is_item && item.MeasurableItem.is_abbrev" >
+										<a uib-tooltip="{{item.MeasurableItem.tooltip}}">{{item.MeasurableItem.header}}	</a>
 									</span>
 								</th>
 							</tr>
@@ -87,9 +87,9 @@
 				<aside class="fixedTable-sidebar">
 					<table class="table table-bordered">
 						<tbody>
-							<tr ng-repeat="student in Students | filter:filterStudents">
+							<tr ng-repeat="sd in Students | filter:filterStudents">
 								<td>
-									<input readonly="readonly" type="text" ng-model="student.full_name" uib-popover="{{student.full_name}}" popover-trigger="mouseenter" class="form-control input-sm" style="text-overflow: ellipsis; border: none;">
+									<input readonly="readonly" type="text" ng-model="sd.Student.full_name" uib-popover="{{sd.Student.full_name}}" popover-trigger="mouseenter" class="form-control input-sm" style="text-overflow: ellipsis; border: none;">
 								</td>
 							</tr>
 						</tbody>
@@ -100,8 +100,8 @@
 						<tbody>
 							<tr ng-repeat="student in Students | filter:filterStudents">
 								<td ng-repeat="item in MeasurableItems" >
-									<input type="text" class="form-control input-sm" ng-if="item.is_item">
-									<span ng-if="!item.is_item"></span>
+									<input type="text" class="form-control input-sm" ng-if="item.MeasurableItem.is_item">
+									<span ng-if="!item.MeasurableItem.is_item"></span>
 								</td>
 								<td></td>
 								<td></td>
@@ -118,34 +118,34 @@
 		</div>
 		<div class="modal-body">
 			<div class="row">
-				<div class="col-lg-8 col-lg-offset-2">
+				<div class="col-lg-10 col-lg-offset-1">
 				
 					<div class="list-group-item" ng-show="State==='edit'">
 						<table class="table table-bordered table-condensed table-sort">
 							<thead>
 								<tr>
-									<th class="w60px text-center">Header</th>
-									<th class="w55px text-center">P.Score</th>
-									<th class="w55px text-center">%</th>
-									<th class="w55px text-center">Base</th>
+									<th class="md text-center">Header</th>
+									<th class="sm text-center">P.Score</th>
+									<th class="sm text-center">%</th>
+									<th class="sm text-center">Base</th>
 									<th class="text-center"><a class="btn btn-default" ng-click="updateState('sort')"><i class="glyphicon glyphicon-sort text-center"></i></a></th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr>
-									<td><input class="form-control input-sm w60px" maxlength="5" ng-model="NewItem.header"></td>
-									<td><input class="form-control input-sm w55px" ng-model="NewItem.perfect_score"></td>
-									<td><input class="form-control input-sm w55px" ng-model="NewItem.percentage"></td>
-									<td><input class="form-control input-sm w55px" ng-model="NewItem.base"></td>
+									<td><input class="form-control input-sm md" maxlength="5" ng-model="NewItem.header"></td>
+									<td><input class="form-control input-sm sm" ng-model="NewItem.perfect_score"></td>
+									<td><input class="form-control input-sm sm" ng-model="NewItem.percentage"></td>
+									<td><input class="form-control input-sm sm" ng-model="NewItem.base"></td>
 									<td class="text-center">
 										<a class="btn btn-success" ng-click="addNewItem(componentId)"><i class="glyphicon glyphicon-plus"></i></a>
 									</td>
 								</tr>
-								<tr ng-repeat="item in MeasurableItems | filter:{component_id:componentId}">
-									<td><input class="form-control input-sm w60px" maxlength="5" value="{{item.header}}"></td>
-									<td><input class="form-control input-sm w55px" value="{{item.perfect_score}}"></td>
-									<td><input class="form-control input-sm w55px" value="{{item.percentage}}"></td>
-									<td><input class="form-control input-sm w55px" value="{{item.base}}"></td>
+								<tr ng-repeat="item in MeasurableItems | filter:componentId">
+									<td><input class="form-control input-sm md" maxlength="5" value="{{item.MeasurableItem.header}}"></td>
+									<td><input class="form-control input-sm sm" value="{{item.MeasurableItem.perfect_score}}"></td>
+									<td><input class="form-control input-sm sm" value="{{item.MeasurableItem.percentage}}"></td>
+									<td><input class="form-control input-sm sm" value="{{item.MeasurableItem.base}}"></td>
 									<td class="col-md-1"><button class="btn btn-danger" ng-click="removeItem($index,item.id)"><span class="glyphicon glyphicon-remove"></span></button></td>
 								</tr>
 							</tbody>
@@ -171,11 +171,11 @@
 										<a class="btn btn-success"><i class="glyphicon glyphicon-floppy-disk"></i></a>
 									</td>
 								</tr>
-								<tr ng-repeat="item in MeasurableItems | filter:{component_id:componentId}" ui-tree-node>
-									<td><input class="form-control input-sm w60px" maxlength="5" value="{{item.header}}"></td>
-									<td><input class="form-control input-sm w55px" value="{{item.perfect_score}}"></td>
-									<td><input class="form-control input-sm w55px" value="{{item.percentage}}"></td>
-									<td><input class="form-control input-sm w55px" value="{{item.base}}"></td>
+								<tr ng-repeat="item in MeasurableItems | filter:componentId" ui-tree-node>
+									<td><input class="form-control input-sm w60px" maxlength="5" value="{{item.MeasurableItem.header}}"></td>
+									<td><input class="form-control input-sm w55px" value="{{item.MeasurableItem.perfect_score}}"></td>
+									<td><input class="form-control input-sm w55px" value="{{item.MeasurableItem.percentage}}"></td>
+									<td><input class="form-control input-sm w55px" value="{{item.MeasurableItem.base}}"></td>
 									<td class="col-md-1"><button class="btn btn-default" ui-tree-handle><span class="glyphicon glyphicon-sort"></span></button></td>
 								</tr>
 							</tbody>
@@ -186,11 +186,12 @@
 		</div>
 		<div class="modal-footer">
 			<button class="btn btn-primary" type="button" ng-click="closeEdit()">Close</button>
+			<button class="btn btn-primary" type="button" ng-click="confirmEdit()">Confirm</button>
 		</div>
 	</script>
 	<script type="text/ng-template" id="TemplateModal.html">
 		<div class="modal-header">
-			<h3 class="modal-title">Choose Template</h3>
+			<h3 class="modal-title">Initializing Template</h3>
 		</div>
 		<div class="modal-body">
 			<div class="row">
@@ -209,38 +210,26 @@
 					</button>
 					<div class="list-group" ng-show="ActiveStep===1">
 						<div class="list-group-item list-group-header">
+							<button class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+							<button class="btn btn-xs btn-warning" ng-click="prevStep()"> <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
+							<span class="ng-binding">Select Template</span>
+						</div>
+						<div class="list-group-item ng-class:{active:tmp.Template.name===SelectedTemplate.Template.name}" ng-repeat="tmp in Templates" ng-click="setSelectedTemplate(tmp)">
+							<h4 class="list-group-item-heading">{{tmp.Template.name}}</h4>
+							<p class="list-group-item-text">School Year: {{tmp.SchoolYear.name}}</p>
+						</div>
+					</div>
+					
+					<div class="list-group" ng-show="ActiveStep===2">
+						<div class="list-group-item list-group-header">
 							<button class="btn btn-xs btn-danger" ng-click="cancelTemplate()"> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
 							<button class="btn btn-xs btn-warning" ng-click="prevStep()"> <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
-						</div>
-						<div class="list-group-item list-group-header">
-							<h5 class="ng-binding">Select Action</h5>
+							<span class="ng-binding">Select Action</span>
 						</div>
 						<div class="list-group-item ng-class:{active:action.id===SelectedAction.id}" ng-repeat="action in Actions" ng-click="setSelectedAction(action)">
 							<h4 class="list-group-item-heading"><i ng-class="action.icon"></i> {{action.title}}</h4>
 							<p class="list-group-item-text">{{action.description}}</p>
 						</div>
-					</div>
-					<div class="list-group" ng-show="ActiveStep===2">
-						<div class="list-group-item list-group-header">
-							<button class="btn btn-xs btn-danger"> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-							<button class="btn btn-xs btn-warning" ng-click="prevStep()"> <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
-						</div>
-						<div ng-show="SelectedAction.id==1" class="list-group-item list-group-header">
-							<h5 class="ng-binding">Select Action</h5>
-						</div>
-						<div ng-show="SelectedAction.id==3" class="list-group-item list-group-header">
-							<h5 class="ng-binding">Select Template</h5>
-						</div>
-
-						<div ng-show="SelectedAction.id==1" class="list-group-item ng-class:{active:option.id===SelectedPrevTempOption.id}" ng-repeat="option in PrevTempOptions" ng-click="setSelectedPrevTempOption(option)">
-							<h4 class="list-group-item-heading">{{option.title}}</h4>
-							<p class="list-group-item-text">{{option.description}}</p>
-						</div>
-						<div ng-show="SelectedAction.id==3" class="list-group-item ng-class:{active:template.name===SelectedTemplate.name}" ng-repeat="template in Templates" ng-click="setSelectedTemplate(template)">
-							<h4 class="list-group-item-heading">{{template.name}}</h4>
-							<p class="list-group-item-text">School Year: {{template.sy}} - {{template.sy+1}} </p>
-						</div>
-						
 					</div>
 					<div class="list-group" ng-show="ActiveStep===3">
 						<div class="list-group-item list-group-header">
