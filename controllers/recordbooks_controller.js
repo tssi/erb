@@ -53,9 +53,9 @@ define(['app','api','jquery','fixtable'], function (app) {
 							data['TemplateId'] = o.template_id;
 						}
 					});
-					console.log(data);
 					
 					api.POST('recordbooks/template', data,function success(response){
+						$scope.recordbook_detail_id = response.data.recordbook_detail_id;
 						$scope.Components = response.data.components;
 						$scope.MeasurableItems = response.data.measurables;
 					});
@@ -149,18 +149,27 @@ define(['app','api','jquery','fixtable'], function (app) {
 						},
 						item_count: function () {
 							return itemCount;
-						}
+						},
+						recordbook_detail_id: function () {
+							return $scope.recordbook_detail_id;
+						},
 					  }
 				});
 				
 				
 				modalInstance.result.then(function () {}, function (source) {
-					console.log(source);
+					
 					//Re-initialize
-					if(source==='confirm'){
+					if(source.action==='confirm'){
+						api.POST('recordbooks/create_items', source.items,function success(response){
+							////$scope.Components = response.data.components;
+							//$scope.MeasurableItems = response.data.measurables;
+						});
+			
 						
-						console.log($scope.MeasurableItems);
-						recordBook(data,$scope.facultyLoadID);
+						
+						//console.log($scope.MeasurableItems);
+						//recordBook(data,$scope.facultyLoadID);
 					}
 					
 				});
@@ -188,11 +197,12 @@ define(['app','api','jquery','fixtable'], function (app) {
 		
 	}]);
 	
-	app.register.controller('ModalInstanceController',['$scope','$rootScope','$uibModalInstance','api','items','component_id','item_count', function ($scope, $rootScope, $uibModalInstance, api,items,component_id,item_count){
+	app.register.controller('ModalInstanceController',['$scope','$rootScope','$uibModalInstance','api','items','component_id','item_count','recordbook_detail_id', function ($scope, $rootScope, $uibModalInstance, api,items,component_id,item_count,recordbook_detail_id){
 	
 		$scope.MeasurableItems = items;
 		$scope.componentId = component_id;
 		$scope.itemCount = item_count;
+		$scope.recordbook_detail_id = recordbook_detail_id;
 		$scope.State = 'edit';
 		
 		//CHANGE STATE EVENT HANDLER
@@ -202,8 +212,13 @@ define(['app','api','jquery','fixtable'], function (app) {
 		
 		//ADD NEW MEASURABLE ITEM EVENT HANDLER
 		$scope.addNewItem=function(componentId){
-			$scope.NewItem.is_item = true;
-			$scope.NewItem.component_id = componentId;
+
+			$scope.NewItem['MeasurableItem'].is_item = true;
+			$scope.NewItem['MeasurableItem'].general_component_id = componentId;
+			$scope.NewItem['MeasurableItem'].recordbook_detail_id = $scope.recordbook_detail_id;
+			
+			
+			console.log($scope.NewItem);
 			$scope.MeasurableItems.push($scope.NewItem);
 			$scope.NewItem={};
 		};
@@ -218,7 +233,7 @@ define(['app','api','jquery','fixtable'], function (app) {
 		//CONFIRM EVENT HANDLER
 		$scope.confirmEdit = function(){
 			$rootScope.__MODAL_OPEN=false;
-			$uibModalInstance.dismiss('confirm');
+			$uibModalInstance.dismiss({'action':'confirm','items':$scope.MeasurableItems});
 		};
 		
 		//CANCEL EVENT HANDLER
