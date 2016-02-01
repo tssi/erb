@@ -1,11 +1,3 @@
-<style>
-	.curridtl {
-		height: 97rem;
-	}
-	.curridtlcanvas {
-		height: 96rem;
-	}
-</style>
 <div class="row" ng-controller="TemplateController" ng-init="init()">
 	<div class="col-md-6">
 		<div class="row">
@@ -57,63 +49,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<div class="list-group">
-					<div class="list-group-item list-group-header">
-						<button class="btn btn-xs btn-success" ng-click="addSubject()"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
-						<div class="btn-group btn-group-sm pull-right" uib-dropdown>
-							<button class="btn btn-default disabled">{{FirstItem}} - {{LastItem}} of {{TotalItems}}</button>
-							<button class="btn btn-default" ng-disabled="!PrevPage || DataLoading" ng-click="navigatePage(PrevPage)"><span class="glyphicon glyphicon-chevron-left"></span></button>
-							<button class="btn btn-default" ng-disabled="!NextPage || DataLoading" ng-click="navigatePage(NextPage)"><span class="glyphicon glyphicon-chevron-right"></span></button>
-							
-							  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" uib-dropdown-toggle>
-								<span class="glyphicon glyphicon-chevron-down"></span>
-							  </button>
-							  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-								<li><a href="#/">Sort</a></li>
-								<li><a href="#/">Filter</a></li>
-								<li><a href="#/">Go to Page</a></li>
-								<li role="separator" class="divider"></li>
-								<li><a href="#/">Some other link</a></li>
-								
-							  </ul>
-						</div>
-						<label>Components</label>
-					</div>
-					<div class="list-group-canvas list-group-search-results">
-					   <div class="list-group-item text-center" ng-if="SearchBox">
-						<h4 class="list-group-item-heading">Search result(s) for <b><i>{{SearchBox}}</i></b>.</h4>
-						<p class="list-group-item-text">
-							Click the <span class="glyphicon glyphicon-search" aria-hidden="true"></span> to look further.
-							Click the <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> to cancel.
-						</p>
-					  </div>
-					  <div class="list-group-item text-center" ng-if="!Components.length">
-							Loading...
-					   </div>
-						<div class="list-group-item" ng-repeat="component in Components | filter:filterComponents" >
-							<div class="row">
-								<div class="col-md-8">
-									<h4 class="list-group-item-heading">{{component.description}}</h4>
-									<p class="list-group-item-text">Code:{{component.code}} | Percentage:{{component.percentage}}</p>
-								</div>
-								<div class="col-md-4">
-									<button class="btn btn-info pull-right" ng-click="pushSub(subject)"><span class="glyphicon glyphicon-hand-right"></span></button>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="list-group-item list-group-search-box">
-						<div class="input-group"> 
-							<div class="input-group-btn" ng-click="confirmSearch()"><button class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button></div>
-							<input type="text" class="form-control" ng-model="SearchBox" placeholder="Search" focus="true" />
-							<div class="input-group-btn" ng-click="cancelSearch()"><button class="btn btn-default"><span class="glyphicon glyphicon-remove"></span></button></div>
-						</div>
-					  </div>
-				</div>
-			</div>
-		</div>
+	
 	</div>
 	<div class="col-md-6">
 		<div class="list-group curridtl" >
@@ -200,27 +136,80 @@
 						</div>
 					</div>
 					
-					<table ui-tree class="table table-bordered table-condensed table-sort" >
-						<thead>
-							<tr>
-								<th colspan="4"><center>General Components</center></th>
-							</tr>
-							<tr>
-								<th>Code</th>
-								<th>Description</th>
-								<th>Percentage</th>
-								<th class="col-md-1"><button class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button></th>
-							</tr>
-						</thead>
-						<tbody >
-							<tr>
-								<td class="col-md-5">WW</td>
-								<td class="col-md-6">WRITTEN WORKS</td>
-								<td class="col-md-5">50%</td>
-								<td class="col-md-1"><button class="btn  btn-default"><span class="glyphicon glyphicon-sort"></span></button></td>
-							</tr>
-						</tbody>
-					</table>
+					<div ng-show="State==='edit'">
+						<table class="table table-bordered table-condensed table-sort">
+							<thead>
+								<tr>
+									<th colspan="4"><center>General Components</center></th>
+								</tr>
+								<tr>
+									<th class="col-md-8">Components</th>
+									<th class="col-md-2">%</th>
+									<th class="text-center col-md-2"><a class="btn btn-default" ng-click="updateState('sort')"><i class="glyphicon glyphicon-sort text-center"></i></a></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<select class="form-control input-sm w55px" ng-model="NewItem.component_id" required="required" >
+											<option value="">Select Component</option> 
+											<option ng-repeat="component in Components" value="{{component.id}}">{{component.name}}</option>
+										</select>	
+									</td>
+									<td><input class="form-control input-sm w55px" ng-model="NewItem.percentage"></td>
+									<td class="text-center">
+										<a class="btn btn-success" ng-click="addNewItem(NewItem)"><i class="glyphicon glyphicon-plus"></i></a>
+									</td>
+								</tr>
+								<tr ng-repeat="item in GeneralComponents">
+									<td>
+										<select class="form-control input-sm w55px" ng-model="item.component_id">
+											<option ng-repeat="component in Components" value="{{component.id}}" >{{component.name}}</option>
+										</select>
+									</td>
+									<td><input class="form-control input-sm w55px" value="{{item.percentage}}"></td>
+									<td class="col-md-1 text-center">
+										<button class="btn btn-primary btn-xs" ng-click="addSubcomp()"><span class="glyphicon glyphicon-plus"></span></button>
+										<button class="btn btn-danger btn-xs" ng-click="removeItem($index)"><span class="glyphicon glyphicon-remove"></span></button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div  ng-show="State==='sort'">
+						<table ui-tree class="table table-bordered table-condensed table-sort">
+							<thead>
+								<tr>
+									<th colspan="4"><center>General Components</center></th>
+								</tr>
+								<tr>
+									<th class="col-md-9">Components</th>
+									<th class="col-md-2">%</th>
+									<th class="col-md-1"><a class="btn btn-danger" ng-click="updateState('edit')"><i class="glyphicon glyphicon-remove text-center"></i></a></th>
+								</tr>
+							</thead>
+							<tbody ui-tree-nodes ng-model="GeneralComponents">
+								<tr>
+									<td colspan="2">
+										<div class="help-text"><a href="" class="btn btn-xs btn-default disabled"><span class="glyphicon glyphicon-sort"></span></a> Click and drag to reorder.</div>
+									</td>
+									<td class="text-center">
+										<a class="btn btn-success"><i class="glyphicon glyphicon-floppy-disk"></i></a>
+									</td>
+								</tr>
+								<tr ng-repeat="item in GeneralComponents" ui-tree-node>
+									<td>
+										<select class="form-control input-sm w55px" ng-model="item.component_id" required="required" >
+											<option value="">Select Component</option> 
+											<option ng-repeat="component in Components" value="{{component.id}}">{{component.name}}</option>
+										</select>	
+									</td>
+									<td><input class="form-control input-sm w55px" value="{{item.percentage}}"></td>
+									<td class="col-md-1"><button class="btn btn-default" ui-tree-handle><span class="glyphicon glyphicon-sort"></span></button></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -5,7 +5,12 @@ define(['app','api','jquery'], function (app) {
 			$rootScope.__MODULE_NAME ='Templates';
 			$scope.initComponents();
 			$scope.initTemplates();
+			$scope.State = 'edit';
+			$scope.GeneralComponents = [];
 		}
+		$scope.updateState=function(state){
+				$scope.State=state;
+			};
 		$scope.filterComponents =  function(component){
 			var searchBox = $scope.SearchBox;
 			var keyword = new RegExp(searchBox, 'i');
@@ -47,8 +52,9 @@ define(['app','api','jquery'], function (app) {
 			});
 		}
 		function getComponents(data){
-			api.GET('components',data,function success(response){
+			api.GET('template_components',data,function success(response){
 				$scope.Components = response.data;
+				console.log($scope.Components);
 				$scope.NextPage=response.meta.next;
 				$scope.PrevPage=response.meta.prev;
 				$scope.TotalItems=response.meta.count;
@@ -60,5 +66,18 @@ define(['app','api','jquery'], function (app) {
 				$scope.DataLoading = false;
 			});
 		}
+		
+		//ADD NEW general components ITEM EVENT HANDLER
+		$scope.addNewItem=function(NewItem){
+			console.log(NewItem);
+			console.log($scope.GeneralComponents)
+			$scope.GeneralComponents.push(NewItem);
+			$scope.NewItem={};
+		};
+		
+		//REMOVE general components ITEM EVENT HANDLER
+		$scope.removeItem=function(index){
+			$scope.GeneralComponents.splice(index);
+		};
 	}]);
 });
