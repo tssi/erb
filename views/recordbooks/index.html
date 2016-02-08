@@ -17,9 +17,9 @@
 				  <div class="list-group-item text-center" ng-if="!FacultyLoads.length">
 						Loading...
 				   </div>
-					<div class="list-group-item" ng-repeat="load in FacultyLoads | filter:filterFacultyLoads" ng-click="openRecordBook({limit:100,data:load,PeriodId:Period})">
+					<div class="list-group-item" ng-repeat="load in FacultyLoads | filter:filterFacultyLoads" ng-click="openRecordBook({limit:100,FacultyLoadId:load.FacultyLoad.id,ActivePeriod:ActivePeriod})">
 						<h4 class="list-group-item-heading">{{load.Subject.description}}</h4>
-						<p class="list-group-item-text">{{load.Subject.educ_level_id}} | {{load.Subject.year_level_id}} - {{load.Section.name}}</p>
+						<p class="list-group-item-text">{{load.Subject.educ_level_id}} | {{load.Subject.year_level_id}} - {{load.Section.name}} - {{load.FacultyLoad.id}}</p>
 					</div>
 				</div>
 				<div class="list-group-item list-group-search-box">
@@ -35,10 +35,10 @@
 	</div>
 	<div class="row" ng-show="erb">
 		<div class="btn-group">
-			<label class="btn btn-default btn-sm" ng-model="Period" uib-btn-radio="'1'" ng-click="selectPeriod('1',true,{limit:100})">1st Period</label>
-			<label class="btn btn-default btn-sm" ng-model="Period" uib-btn-radio="'2'" ng-click="selectPeriod('2',false,{limit:100})">2nd Period</label>
-			<label class="btn btn-default btn-sm" ng-model="Period" uib-btn-radio="'3'" ng-click="selectPeriod('3',false,{limit:100})">3rd Period</label>
-			<label class="btn btn-default btn-sm" ng-model="Period" uib-btn-radio="'4'" ng-click="selectPeriod('4',false,{limit:100})">4th Period</label>
+			<label class="btn btn-default btn-sm" ng-model="ActivePeriod" uib-btn-radio="'1'" ng-click="selectPeriod('1',true)">1st Period</label>
+			<label class="btn btn-default btn-sm" ng-model="ActivePeriod" uib-btn-radio="'2'" ng-click="selectPeriod('2',false)">2nd Period</label>
+			<label class="btn btn-default btn-sm" ng-model="ActivePeriod" uib-btn-radio="'3'" ng-click="selectPeriod('3',false)">3rd Period</label>
+			<label class="btn btn-default btn-sm" ng-model="ActivePeriod" uib-btn-radio="'4'" ng-click="selectPeriod('4',false)">4th Period</label>
 		</div>
 		<div class="btn-group pull-right" uib-dropdown>
 			<button type="button" class="btn btn-default btn-sm"><i class="glyphicon glyphicon-export"></i> Export</button>
@@ -60,10 +60,10 @@
 					<table class="table table-bordered">
 						<thead>
 							<tr >
-								<th ng-repeat="c in Components" colspan="{{c.measurable_item_count}}">
+								<th ng-repeat="c in Components" colspan="{{c.item_count}}">
 									<div class=" btn-group btn-group-xs pull-right">
-										<a class="btn btn-default" tooltip-placement="bottom" uib-tooltip="Add / Edit Measurable Item" ng-click="editMeasurable({limit:100},c.general_components.id,c.measurable_item_count)"><i class="glyphicon glyphicon-edit"></i></a>
-									</div>{{c.general_components.name}}
+										<a class="btn btn-default" tooltip-placement="bottom" uib-tooltip="Add / Edit Measurable Item" ng-click="editMeasurable(c)"><i class="glyphicon glyphicon-edit"></i></a>
+									</div>{{c.GeneralComponent.name}}
 								</th>
 								<th rowspan="2" class="text-center"><a uib-tooltip="Summary">SUM</a></th>
 								<th rowspan="2" class="text-center"><a uib-tooltip="Quarterly Grade">Q.GR</a></th>
@@ -114,36 +114,58 @@
 	</div>
 	<script type="text/ng-template" id="UpdateMeasurable.html">
 		<div class="modal-header">
-			<h3 class="modal-title">Update Measurable Item(s)</h3>
+			<h3 class="modal-title">Update</h3>
 		</div>
 		<div class="modal-body">
 			<div class="row">
-				<div class="col-lg-10 col-lg-offset-1">
-				
+				<div class="col-lg-6 ">
+
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">{{componentName}}</h3>
+						</div>
+						<div class="panel-body">
+							<div class="list-group">
+								 <li class="list-group-item">
+									Percentage
+									<span class="label label-primary pull-right xs">{{percentage}} %</span>
+								</li>
+								<li class="list-group-item">
+									Percent To Pass
+									<span class="label label-warning pull-right xs">{{percentToPass}} %</span>
+								</li>
+								<li class="list-group-item">
+									Base
+									<span class="label label-info pull-right xs">{{base}}</span>
+								</li>
+								<li class="list-group-item">
+									Ceiling
+									<span class="label label-success pull-right xs">{{ceiling}}</span>
+								</li>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+				<div class="col-lg-6">
 					<div class="list-group-item" ng-show="State==='edit'">
 						<table class="table table-bordered table-condensed table-sort">
 							<thead>
 								<tr>
 									<th class="md text-center">Header</th>
 									<th class="sm text-center">P.Score</th>
-									<th class="sm text-center">%</th>
-									<th class="sm text-center">Base</th>
 									<th class="text-center"><a class="btn btn-default" ng-click="updateState('sort')"><i class="glyphicon glyphicon-sort text-center"></i></a></th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr ng-repeat="item in MeasurableItems | filter:componentId">
-									<td><input class="form-control input-sm md" maxlength="5" ng-model="item.MeasurableItem.header"></td>
+									<td><input class="form-control input-sm md" maxlength="4" ng-model="item.MeasurableItem.header"></td>
 									<td><input class="form-control input-sm sm" ng-model="item.MeasurableItem.perfect_score"></td>
-									<td><input class="form-control input-sm sm" ng-model="item.MeasurableItem.percentage"></td>
-									<td><input class="form-control input-sm sm" ng-model="item.MeasurableItem.base"></td>
 									<td class="col-md-1"><button class="btn btn-danger" ng-click="removeItem($index,item.id)"><span class="glyphicon glyphicon-remove"></span></button></td>
 								</tr>
 								<tr>
-									<td><input class="form-control input-sm md" maxlength="5" ng-model="NewItem.MeasurableItem.header"></td>
+									<td><input class="form-control input-sm md" maxlength="4" ng-model="NewItem.MeasurableItem.header"></td>
 									<td><input class="form-control input-sm sm" ng-model="NewItem.MeasurableItem.perfect_score"></td>
-									<td><input class="form-control input-sm sm" ng-model="NewItem.MeasurableItem.percentage"></td>
-									<td><input class="form-control input-sm sm" ng-model="NewItem.MeasurableItem.base"></td>
 									<td class="text-center">
 										<a class="btn btn-success" ng-click="addNewItem(componentId)"><i class="glyphicon glyphicon-plus"></i></a>
 									</td>
@@ -155,23 +177,19 @@
 						<table ui-tree class="table table-bordered table-condensed table-sort">
 							<thead>
 								<tr>
-									<th class="w60px text-center">Header</th>
-									<th class="w55px text-center">P.Score</th>
-									<th class="w55px text-center">%</th>
-									<th class="w55px text-center">Base</th>
+									<th class="md text-center">Header</th>
+									<th class="sm text-center">P.Score</th>
 									<th class="text-center"><a class="btn btn-danger" ng-click="updateState('edit')"><i class="glyphicon glyphicon-remove text-center"></i></a></th>
 								</tr>
 							</thead>
 							<tbody ui-tree-nodes ng-model="MeasurableItems">
 								<tr ng-repeat="item in MeasurableItems | filter:componentId" ui-tree-node>
-									<td><input class="form-control input-sm w60px" maxlength="5" ng-model="item.MeasurableItem.header"></td>
-									<td><input class="form-control input-sm w55px" ng-model="item.MeasurableItem.perfect_score"></td>
-									<td><input class="form-control input-sm w55px" ng-model="item.MeasurableItem.percentage"></td>
-									<td><input class="form-control input-sm w55px" ng-model="item.MeasurableItem.base"></td>
+									<td><input class="form-control input-sm md" maxlength="4" ng-model="item.MeasurableItem.header"></td>
+									<td><input class="form-control input-sm sm" ng-model="item.MeasurableItem.perfect_score"></td>
 									<td class="col-md-1"><button class="btn btn-default" ui-tree-handle><span class="glyphicon glyphicon-sort"></span></button></td>
 								</tr>
 								<tr>
-									<td colspan="4">
+									<td colspan="2">
 										<div class="help-text"><a href="" class="btn btn-xs btn-default disabled"><span class="glyphicon glyphicon-sort"></span></a> Click and drag to reorder.</div>
 									</td>
 									<td class="text-center">
@@ -214,7 +232,7 @@
 							<button class="btn btn-xs btn-warning" ng-click="prevStep()"> <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
 							<span class="ng-binding">Select Template</span>
 						</div>
-						<div class="list-group-item ng-class:{active:tmp.Template.name===SelectedTemplate.Template.name}" ng-repeat="tmp in Templates" ng-click="setSelectedTemplate(tmp)">
+						<div class="list-group-item ng-class:{active:tmp.Template.id===SelectedTemplate}" ng-repeat="tmp in Templates" ng-click="setSelectedTemplate(tmp.Template.id)">
 							<h4 class="list-group-item-heading">{{tmp.Template.name}}</h4>
 							<p class="list-group-item-text">School Year: {{tmp.SchoolYear.name}}</p>
 						</div>
@@ -226,7 +244,7 @@
 							<button class="btn btn-xs btn-warning" ng-click="prevStep()"> <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
 							<span class="ng-binding">Select Action</span>
 						</div>
-						<div class="list-group-item ng-class:{active:action.id===SelectedAction.id}" ng-repeat="action in Actions" ng-click="setSelectedAction(action)">
+						<div class="list-group-item ng-class:{active:action.id===SelectedAction}" ng-repeat="action in Actions" ng-click="setSelectedAction(action)">
 							<h4 class="list-group-item-heading"><i ng-class="action.icon"></i> {{action.title}}</h4>
 							<p class="list-group-item-text">{{action.description}}</p>
 						</div>

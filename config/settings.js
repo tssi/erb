@@ -9,7 +9,7 @@ define(function() {
 	DEFAULT_MODULE_NAME: 'Module',
 	TEST_DELAY: 0,
 	TEST_DIRECTORY:'../tests',
-	API_DIRECTORY:'../newerb',
+	API_DIRECTORY:'../api',
 	TEST_SUCCESS:true,
 	TEST_ERROR:true,
   };

@@ -5,6 +5,7 @@ define(['app','api','jquery','fixtable'], function (app) {
 			$rootScope.__MODULE_NAME ='RecordBook';
 			$scope.initFacultyLoads({limit:100});
 			$scope.initStudents({limit:100});
+			$scope.initActivePeriod({limit:100});
 			$scope.loads = true;
 			$scope.erb = false;
 			$scope.Period = "1";
@@ -31,150 +32,101 @@ define(['app','api','jquery','fixtable'], function (app) {
 		$scope.initStudents = function(data){api.GET('students/api',data,function success(response){
 			$scope.Students = response.data
 		})};		
+		$scope.initActivePeriod= function(data){api.GET('system_defaults/active_period',data,function success(response){
+			$scope.ActivePeriod = response.data.SystemDefault.value;
+		})};	
 	
 		$scope.openRecordBook = function(data){
-			$scope.facultyLoadID = data.data.FacultyLoad.id;
-			initRecordBook(data);
-		};
-		
-		function initRecordBook(data){
+			$scope.FacultyLoadId = data.FacultyLoadId;
 			
 			api.POST('recordbooks/create',data,function success(response){
 				$scope.loads = false;
 				$scope.erb = true;
-				$scope.recordbookId = response.data.Recordbook.id;
-				
-				if(!response.data.RecordbookDetail.length){
-					$scope.period_id = $scope.Period;
-					selectingTemplateModal();
-				}else{
-					$.each(response.data.RecordbookDetail,function(i,o){
-						if(o.period_id == $scope.Period){
-							data['TemplateId'] = o.template_id;
-						}
-					});
-					
+				$scope.RecordbookId = response.data.Recordbook.id;//INIT NG-recordbook
+				$scope.TemplateId = response.data.Recordbook.template_id;//INIT NG-TEMPLATEID
+				if(!$scope.TemplateId){
+					initTemplate();
+				}else{//RUN THIS OF EVERYTHING ON RECORDBOOK HAS BEEN INITIALIZED
+					data['RecordbookId'] = $scope.RecordbookId;
+					data['TemplateId'] = $scope.TemplateId;
 					api.POST('recordbooks/template', data,function success(response){
-						$scope.recordbook_detail_id = response.data.recordbook_detail_id;
 						$scope.Components = response.data.components;
 						$scope.MeasurableItems = response.data.measurables;
 					});
 				}
 			});
-		}
+		};
 		
-		function selectingTemplateModal(){
+		function initTemplate(){
+			var data = {};
+			data['limit'] = 100;
+			data['RecordbookId'] = $scope.RecordbookId;
+			data['PeriodId'] = $scope.ActivePeriod;
+			
 			var modalInstance = $uibModal.open({
-										animation: true,
-										templateUrl: 'TemplateModal.html',
-										controller: 'TemplateModalController',
+										animation: true,templateUrl: 'TemplateModal.html',controller: 'TemplateModalController',
 										resolve: {
-										  period_id: function () {
-											return $scope.Period;
+										  data: function () {
+											return data;
 										  }
 										}
 									});
 		
-			modalInstance.result.then(function () {}, function (data) {
-				if(data.source==='confirm'){
-					recordBook(data.template,data.action);
+			modalInstance.result.then(function(){},function(response){
+				if(response.source==='confirm'){
+					recordBook(response.data);
 				}
 			});
 		}
 		
-		function recordBook(tmp,action){
+		function recordBook(data){
 			$scope.loads = false;
 			$scope.erb = true;
-			
-			var data  = {
-					'TemplateId':tmp.Template.id,
-					'PeriodId':$scope.Period,
-					'SelectedAction': action.id,
-					'data':{
-						'Recordbook':{
-							'id': $scope.recordbookId
-					}
-				}
-			}
-			
-			api.POST('recordbooks/template', data,function success(response){
+			api.POST('recordbooks/template',data,function success(response){
 				$scope.Components = response.data.components;
 				$scope.MeasurableItems = response.data.measurables;
 			});
-			
 		}
 		
 		
-		// PERIOD RADIO BUTTON EVENT HANDLER
-		$scope.selectPeriod = function(period,hasTemplate,data){
+		//PERIOD RADIO BUTTON EVENT HANDLER
+		$scope.selectPeriod = function(period,hasTemplate){
+		
 			if(!hasTemplate){
-				var modalInstance = $uibModal.open({
-												animation: true,
-												templateUrl: 'TemplateModal.html',
-												controller: 'TemplateModalController',
-												resolve: {
-												  period_id: function () {
-													return period;
-												  }
-												}
-											});
+				var data = {}
+				data['limit'] = 100;
+				data['FacultyLoadId'] = $scope.FacultyLoadId;
+				data['ActivePeriod'] = $scope.ActivePeriod;
 				
-				modalInstance.result.then(function () {}, function (source) {
-					if(source==='confirm'){
-							
-						recordBook(data,'2');
-				
-					}
-					
+				api.POST('recordbooks/create',data,function success(response){
+					$scope.RecordbookId = response.data.Recordbook.id;
+					console.log($scope.RecordbookId);
+					initTemplate();
 				});
-					
 			}
 		};
 			
-		//Opening the modal
-		$scope.editMeasurable=function(data,componentId,itemCount){
+		//EDIT MEASURABLE ITEM EVNT HANDLER
+		$scope.editMeasurable=function(data){
+			console.log(data);
+			var modalInstance = $uibModal.open({
+				animation: true,
+				templateUrl: 'UpdateMeasurable.html',
+				controller: 'UpdateMeasurableController',
+				resolve: {
+					data: function () {
+						return data;
+					},
+				  }
+			});
 			
-		//	api.GET('measurable_items',data,function success(response){
-			//	$scope.EditableItems = response.data;
-				var modalInstance = $uibModal.open({
-					animation: true,
-					templateUrl: 'UpdateMeasurable.html',
-					controller: 'ModalInstanceController',
-					resolve: {
-						items: function () {
-							return $scope.MeasurableItems;
-						},
-						component_id: function () {
-							return componentId;
-						},
-						item_count: function () {
-							return itemCount;
-						},
-						recordbook_detail_id: function () {
-							return $scope.recordbook_detail_id;
-						},
-					  }
-				});
-				
-				
-				modalInstance.result.then(function () {}, function (source) {
-					
-					//Re-initialize
-					if(source.action==='confirm'){
-						api.POST('recordbooks/create_items', source.items,function success(response){
-							////$scope.Components = response.data.components;
-							//$scope.MeasurableItems = response.data.measurables;
-						});
-			
-						
-						
-						//console.log($scope.MeasurableItems);
-						//recordBook(data,$scope.facultyLoadID);
-					}
-					
-				});
-		//	});
-				
+			modalInstance.result.then(function () {}, function (source) {
+				if(source.action==='confirm'){
+					api.POST('recordbooks/create_items', source.items,function success(response){//INSERT NEW MEASURABLE ITEMS
+						recordBook(source.data);//REPOPULATE RECORDBOOK
+					});
+				}
+			});
 		};
 					
 		//FIX TABLE
@@ -197,13 +149,20 @@ define(['app','api','jquery','fixtable'], function (app) {
 		
 	}]);
 	
-	app.register.controller('ModalInstanceController',['$scope','$rootScope','$uibModalInstance','api','items','component_id','item_count','recordbook_detail_id', function ($scope, $rootScope, $uibModalInstance, api,items,component_id,item_count,recordbook_detail_id){
-	
-		$scope.MeasurableItems = items;
-		$scope.componentId = component_id;
-		$scope.itemCount = item_count;
-		$scope.recordbook_detail_id = recordbook_detail_id;
+	app.register.controller('UpdateMeasurableController',['$scope','$rootScope','$uibModalInstance','api','data', function ($scope, $rootScope, $uibModalInstance, api,data){
+		console.log(data);
+		$scope.MeasurableItems = data.MeasurableItem;
+		$scope.componentId = data.GeneralComponent.id;
+		$scope.itemCount = data.item_count;
+		$scope.recordbook_detail_id = data.id;
 		$scope.State = 'edit';
+		//VIEW MODEL
+		$scope.componentName = data.GeneralComponent.name;
+		$scope.percentToPass = data.percent_to_pass;
+		$scope.percentage = data.percentage;
+		$scope.base = data.base;
+		$scope.ceiling = data.ceiling;
+		
 		
 		//CHANGE STATE EVENT HANDLER
 		$scope.updateState=function(state){
@@ -212,13 +171,9 @@ define(['app','api','jquery','fixtable'], function (app) {
 		
 		//ADD NEW MEASURABLE ITEM EVENT HANDLER
 		$scope.addNewItem=function(componentId){
-
 			$scope.NewItem['MeasurableItem'].is_item = true;
 			$scope.NewItem['MeasurableItem'].general_component_id = componentId;
 			$scope.NewItem['MeasurableItem'].recordbook_detail_id = $scope.recordbook_detail_id;
-			
-			
-			console.log($scope.NewItem);
 			$scope.MeasurableItems.push($scope.NewItem);
 			$scope.NewItem={};
 		};
@@ -227,13 +182,16 @@ define(['app','api','jquery','fixtable'], function (app) {
 		$scope.removeItem=function(index,id){
 			$scope.MeasurableItems.splice(index, 1);
 		};
-		
-
-		
+			
 		//CONFIRM EVENT HANDLER
 		$scope.confirmEdit = function(){
+			var d = {};
+			d['limit'] = 100;
+			d['RecordbookId'] = data.Recordbook.id;
+			d['PeriodId'] = data.Recordbook.period_id;
+			d['TemplateId'] = data.Recordbook.template_id;
 			$rootScope.__MODAL_OPEN=false;
-			$uibModalInstance.dismiss({'action':'confirm','items':$scope.MeasurableItems});
+			$uibModalInstance.dismiss({'action':'confirm','items':$scope.MeasurableItems,'data':d});
 		};
 		
 		//CANCEL EVENT HANDLER
@@ -243,69 +201,67 @@ define(['app','api','jquery','fixtable'], function (app) {
 		};
 	}]);
 
-	app.register.controller('TemplateModalController',['$scope','$rootScope','$uibModalInstance','api','period_id', function ($scope, $rootScope, $uibModalInstance, api, period_id){
-		$scope.ActiveStep=1;
-		
+	app.register.controller('TemplateModalController',['$scope','$rootScope','$uibModalInstance','api','data', function ($scope, $rootScope, $uibModalInstance, api, data){
+		//INIT STEPS
 		$scope.Steps = [{id:1, description:"Step 1"},{id:2, description:"Step 2"},{id:3, description:"Step 3"}];
 		
+		//INIT ACTIVE STEP
+		$scope.ActiveStep=1;
 		
-		
-		//GET ALL TEMPLATES
+		//GET TEMPLATE OPTIONS
 		api.GET('templates/all',function success(response){
 			$scope.Templates = response.data;
 		});	
 		
+		//NEXT STEP HANDLER
 		$scope.nextStep = function(){
 			if($scope.ActiveStep===1){
-				if(period_id == '1'){
+				if(data['PeriodId'] == '1'){
 					$scope.Actions = [
 						{id:'BlankTemp', title:"Blank template", description:"Example block-level help text here.", icon:"glyphicon glyphicon-file"},
 						{id:'CopyFrom', title:"Copy meausrable items from other section", description:"Example block-level help text here.", icon:"glyphicon glyphicon-copyright-mark"},
 					];
 				}else{
 					// NOT YET DONE CODING
-					console.log($scope.SelectedTemplate);
 					$scope.Actions = [
 						{id:'BlankTemp', title:"Blank template", description:"Example block-level help text here.", icon:"glyphicon glyphicon-file"},
 						{id:'CopyPrev', title:"Copy measurable items from previous period", description:"Example block-level help text here.", icon:"glyphicon glyphicon-copy"},
 						{id:'CopyFrom', title:"Copy meausrable items from other section", description:"Example block-level help text here.", icon:"glyphicon glyphicon-copyright-mark"},
 					];
-					//
 				}
-				
-			}
-			if($scope.ActiveStep===2){
-		
 			}
 			if($scope.ActiveStep===3){
 				$rootScope.__MODAL_OPEN=false;
-				$uibModalInstance.dismiss({source:'confirm','action':$scope.SelectedAction,'template':$scope.SelectedTemplate});
+				$uibModalInstance.dismiss({source:'confirm','data':data});
 			};
 			if($scope.ActiveStep<$scope.Steps.length){
 				$scope.ActiveStep++;
 			}
 		};
 		
+		//PREV STEP HANDLER
 		$scope.prevStep = function(){
 			if($scope.ActiveStep>1){
 				$scope.ActiveStep--;
 			};
 		};
 		
+		//UPDATE STEP HANDLER
 		$scope.updateStep=function(step){
 			$scope.ActiveStep = step.id;
 		};
 		
-		//HIGLIGHT SELECTED OPTIONS
+		//HIGLIGHT SELECTED ACTION
 		$scope.setSelectedAction=function(selected){
-			$scope.SelectedAction = selected;
+			$scope.SelectedAction = data['SelectedAction'] = selected.id;
 		};
 		
+		//HIGHLIGHT SELECTED ACTION
 		$scope.setSelectedTemplate=function(selected){
-			$scope.SelectedTemplate = selected;
+			$scope.SelectedTemplate = data['TemplateId'] = selected;
 		};
-	
-		//CANCEL EVENT HANDLER
+		
+		//CANCEL HANDLER
 		$scope.cancelTemplate = function(){
 			$rootScope.__MODAL_OPEN=false;
 			$uibModalInstance.dismiss('cancel');
