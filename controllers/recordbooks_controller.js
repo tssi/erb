@@ -5,7 +5,8 @@ define(['app','api','jquery','fixtable'], function (app) {
 			$rootScope.__MODULE_NAME ='RecordBook';
 			$scope.initFacultyLoads({limit:100});
 			$scope.initStudents({limit:100});
-			$scope.initActivePeriod({limit:100});
+			$scope.initActivePeriod();
+			$scope.initPeriods();
 			$scope.loads = true;
 			$scope.erb = false;
 			$scope.Period = "1";
@@ -31,8 +32,13 @@ define(['app','api','jquery','fixtable'], function (app) {
 		}				
 		$scope.initStudents = function(data){api.GET('students/api',data,function success(response){
 			$scope.Students = response.data
+		})};	
+		
+		$scope.initPeriods = function(data){api.GET('system_defaults/periods',function success(response){
+			$scope.Periods = response.data;
 		})};		
-		$scope.initActivePeriod= function(data){api.GET('system_defaults/active_period',data,function success(response){
+		
+		$scope.initActivePeriod= function(data){api.GET('system_defaults/active_period',function success(response){
 			$scope.ActivePeriod = response.data.SystemDefault.value;
 		})};	
 	
@@ -90,21 +96,33 @@ define(['app','api','jquery','fixtable'], function (app) {
 		
 		
 		//PERIOD RADIO BUTTON EVENT HANDLER
-		$scope.selectPeriod = function(period,hasTemplate){
-		
-			if(!hasTemplate){
+		$scope.selectPeriod = function(){
 				var data = {}
-				data['limit'] = 100;
-				data['FacultyLoadId'] = $scope.FacultyLoadId;
-				data['ActivePeriod'] = $scope.ActivePeriod;
+					data['limit'] = 100;
+					data['FacultyLoadId'] = $scope.FacultyLoadId;
+					data['ActivePeriod'] = $scope.ActivePeriod;
 				
-				api.POST('recordbooks/create',data,function success(response){
-					$scope.RecordbookId = response.data.Recordbook.id;
-					console.log($scope.RecordbookId);
-					initTemplate();
+				//CHECK RECORDBOOK
+				api.POST('recordbooks/checkbook',data,function success(response){
+					var record = response.data;
+					if(record == 'false'){//IF NO RECORD BOOK
+						api.POST('recordbooks/create',data,function success(response){
+							$scope.RecordbookId = response.data.Recordbook.id;
+							initTemplate();
+						});
+					}else if(record.Recordbook.template_id ==  null){//IF HAS RECORDBOOK BUT NO TEMPLATE
+						$scope.RecordbookId = response.data.Recordbook.id;
+						initTemplate();
+					}else{//WITH RECORDBOOK
+						var d = {};
+							d['limit'] = 100;
+							d['RecordbookId'] = record.Recordbook.id;
+							d['PeriodId'] = record.Recordbook.period_id;
+							d['TemplateId'] = record.Recordbook.template_id;
+						recordBook(d);
+					}
 				});
-			}
-		};
+			};
 			
 		//EDIT MEASURABLE ITEM EVNT HANDLER
 		$scope.editMeasurable=function(data){
