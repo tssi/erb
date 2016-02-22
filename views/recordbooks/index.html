@@ -31,7 +31,6 @@
 				</div>
 			</div>
 		</div>
-		
 	</div>
 	<div class="row" ng-show="erb">
 		<div class="btn-group">
@@ -98,9 +97,10 @@
 				<div class="fixedTable-body">
 					<table class="table table-bordered">
 						<tbody>
-							<tr ng-repeat="student in Students | filter:filterStudents">
-								<td ng-repeat="item in MeasurableItems" >
-									<input type="text" class="form-control input-sm" ng-if="item.MeasurableItem.is_item">
+							<tr ng-repeat="(student_key, student) in Students | filter:filterStudents">
+								<td ng-repeat="(item_key, item) in MeasurableItems" >
+									<input type="text" class="form-control input-sm text-right" ng-if="item.MeasurableItem.is_item" my-enter="DoWork(rawscore[item.MeasurableItem.general_component_id][student_key][item_key],item.MeasurableItem.id)" ng-model="rawscore[item.MeasurableItem.general_component_id][student_key][item_key]">
+									
 									<span ng-if="!item.MeasurableItem.is_item"></span>
 								</td>
 								<td></td>

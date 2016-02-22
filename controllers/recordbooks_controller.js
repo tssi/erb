@@ -58,6 +58,7 @@ define(['app','api','jquery','fixtable'], function (app) {
 					api.POST('recordbooks/template', data,function success(response){
 						$scope.Components = response.data.components;
 						$scope.MeasurableItems = response.data.measurables;
+						console.log($scope.MeasurableItems);
 					});
 				}
 			});
@@ -165,7 +166,31 @@ define(['app','api','jquery','fixtable'], function (app) {
 			demo = new fixedTable($('#demo'));
 		}).call(this);
 		
-	}]);
+		//SAVING RAWSCORE ON ENTER
+		$scope.DoWork = function(rawscore,measurable_item_id){
+			var data = {};
+			data['rawscore'] = rawscore;
+			data['measurable_item_id'] = measurable_item_id;
+			api.POST('recordbooks/save_rawscore', data,function success(response){
+			
+				//NEXT POPULATE
+			
+			});
+		};
+		
+	}]).directive('myEnter', function () {
+		return function (scope, element, attrs) {
+			element.bind("keydown keypress", function (event) {
+				if(event.which === 13) {
+					scope.$apply(function (){
+						scope.$eval(attrs.myEnter);
+					});
+					event.preventDefault();
+				}
+			});
+		};
+	});
+	
 	
 	app.register.controller('UpdateMeasurableController',['$scope','$rootScope','$uibModalInstance','api','data', function ($scope, $rootScope, $uibModalInstance, api,data){
 		console.log(data);
@@ -286,6 +311,11 @@ define(['app','api','jquery','fixtable'], function (app) {
 		};
 	}]);
 	
+
 });
+
+	
+	
+	
 
 
