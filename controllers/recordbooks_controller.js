@@ -10,7 +10,11 @@ define(['app','api','jquery','fixtable'], function (app) {
 			$scope.loads = true;
 			$scope.erb = false;
 			$scope.Period = "1";
+			$scope.rawscore = {};
+		
+	
 		}
+		
 		$scope.initFacultyLoads = function(data){
 			api.GET('faculty_loads/api',data,function success(response){
 				$scope.FacultyLoads = response.data;
@@ -41,6 +45,24 @@ define(['app','api','jquery','fixtable'], function (app) {
 		$scope.initActivePeriod= function(data){api.GET('system_defaults/active_period',function success(response){
 			$scope.ActivePeriod = response.data.SystemDefault.value;
 		})};	
+		
+		function rawscores(){
+			console.log($scope.RecordbookId);
+			var data  = {};
+				data['recordbook_id'] = $scope.RecordbookId;
+				
+			api.POST('recordbooks/rawscores', data,function success(response){
+					if(response.data != 'false'){
+						$.each(response.data,function(i,o){
+							var model = o.MeasurableItem.general_component_id+o.Student.student_number+o.MeasurableItem.header;
+							var score = o.Rawscore.rawscore;
+							$scope.rawscore[model] = {};
+							$scope.rawscore[model] = o.Rawscore.rawscore;
+						});
+					}
+				});
+		}
+	
 	
 		$scope.openRecordBook = function(data){
 			$scope.FacultyLoadId = data.FacultyLoadId;
@@ -58,8 +80,9 @@ define(['app','api','jquery','fixtable'], function (app) {
 					api.POST('recordbooks/template', data,function success(response){
 						$scope.Components = response.data.components;
 						$scope.MeasurableItems = response.data.measurables;
-						console.log($scope.MeasurableItems);
+						rawscores();
 					});
+					
 				}
 			});
 		};
@@ -92,6 +115,7 @@ define(['app','api','jquery','fixtable'], function (app) {
 			api.POST('recordbooks/template',data,function success(response){
 				$scope.Components = response.data.components;
 				$scope.MeasurableItems = response.data.measurables;
+				rawscores();
 			});
 		}
 		
@@ -112,15 +136,17 @@ define(['app','api','jquery','fixtable'], function (app) {
 							initTemplate();
 						});
 					}else if(record.Recordbook.template_id ==  null){//IF HAS RECORDBOOK BUT NO TEMPLATE
-						$scope.RecordbookId = response.data.Recordbook.id;
+						$scope.RecordbookId = record.Recordbook.id;
 						initTemplate();
 					}else{//WITH RECORDBOOK
+						$scope.RecordbookId = record.Recordbook.id;
 						var d = {};
 							d['limit'] = 100;
 							d['RecordbookId'] = record.Recordbook.id;
 							d['PeriodId'] = record.Recordbook.period_id;
 							d['TemplateId'] = record.Recordbook.template_id;
 						recordBook(d);
+						
 					}
 				});
 			};
@@ -167,13 +193,18 @@ define(['app','api','jquery','fixtable'], function (app) {
 		}).call(this);
 		
 		//SAVING RAWSCORE ON ENTER
-		$scope.DoWork = function(rawscore,measurable_item_id){
+		$scope.DoWork = function(rawscore,measurable_item_id,stud_id){
+			console.log(rawscore);
 			var data = {};
 			data['rawscore'] = rawscore;
+			data['rawscore'] = rawscore;
+			data['student_id'] = stud_id;
 			data['measurable_item_id'] = measurable_item_id;
+			data['recordbook_id'] = $scope.RecordbookId;
 			api.POST('recordbooks/save_rawscore', data,function success(response){
 			
-				//NEXT POPULATE
+				
+				console.log($scope.rawscore);
 			
 			});
 		};
